@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 public class StudentManager {
     public static void main(String[] args) {
-        ArrayList<Student> students = new ArrayList<>();
+        ArrayList<Student> students = FileStorage.loadStudents("students.txt");
         int approvedCount = 0;
         int rejectedCount = 0;
         int pendingCount = 0;
