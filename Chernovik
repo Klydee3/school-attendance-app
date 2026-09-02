@@ -1,0 +1,11 @@
+import java.util.InputMismatchException;
+import InputMismatchException;
+
+        try {
+            choise=scann.nextInt();
+            scann.nextLine();
+        }catch(InputMisMatchException e) {
+            scann.nextLine();
+            System.out.println("Ошибка, введите число!");
+            choise=-1;
+        }
