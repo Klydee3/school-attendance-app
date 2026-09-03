@@ -16,6 +16,7 @@ public class AttendanceApp {
         System.out.println("2. Зарегистрировать студента");
         System.out.println("3. Подтвердить/отклонить студента");
         System.out.println("4. Сохранить в файл");
+        System.out.println("5. Показать всех в Json");
         System.out.println("0. Выход");
         System.out.print("Твой выбор:");
     }
@@ -79,6 +80,19 @@ public class AttendanceApp {
     static void saveToFile() {
         FileStorage.saveStudents(new ArrayList<>(students.values()),"students.txt");
     }
+    static void showAllJson() {
+        String result="[";
+        int count=0;
+        for(Student s:students.values()) {
+            result+=s.toJson();
+            count++;
+            if(count<students.size()) {
+                result+=", ";
+            }
+        }
+        result+="]";
+        System.out.println(result);
+    }
     public static void main(String[] args) {
         loadRegistry();
         Scanner scann=new Scanner(System.in);
@@ -94,6 +108,8 @@ public class AttendanceApp {
                     reviewStudent(scann);
                 } else if(choise==4) {
                     saveToFile();
+                } else if(choise==5) {
+                    showAllJson();
                 } else if(choise!=0) {
                     System.out.println("Неизвестная команда");
                 }   
