@@ -18,4 +18,7 @@ class Student {
     void setStatus(RegistrationStatus newStatus) {
         this.status = newStatus;
     }
+    public String toJson() {
+        return "{\"name\": \""+name+"\",\"status\": \""+status+"\"}";
+    }
 }

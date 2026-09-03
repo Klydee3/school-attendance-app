@@ -80,7 +80,7 @@ public class AttendanceApp {
     static void saveToFile() {
         FileStorage.saveStudents(new ArrayList<>(students.values()),"students.txt");
     }
-    static void showAllJson() {
+    static String studentsToJson() {
         String result="[";
         int count=0;
         for(Student s:students.values()) {
@@ -90,8 +90,10 @@ public class AttendanceApp {
                 result+=", ";
             }
         }
-        result+="]";
-        System.out.println(result);
+        return result+="]";
+    }
+    static void showAllJson() {
+        System.out.println(studentsToJson());
     }
     public static void main(String[] args) {
         loadRegistry();
