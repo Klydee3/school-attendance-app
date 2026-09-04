@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 public class AttendanceServer {
     static Map<String, String> parseQuery(HttpExchange exchange) {
         Map<String, String> params = new HashMap<>();
@@ -62,12 +63,19 @@ public class AttendanceServer {
             }
         }
     }
+    static class SaveHandler implements HttpHandler {
+        public void handle(HttpExchange exchange) throws IOException {
+            FileStorage.saveStudents(new ArrayList<>(AttendanceApp.students.values()),"students.txt");
+            sendJson(exchange, "{\"result\":\"ok\",\"message\":\"saved\"}");
+        }
+    }
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/students", new StudentsHandler());
         server.createContext("/register", new RegisterHandler());
         server.createContext("/review", new ReviewHandler());
+        server.createContext("/save", new SaveHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }
