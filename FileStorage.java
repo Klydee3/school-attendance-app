@@ -6,9 +6,9 @@ import java.util.ArrayList;
 public class FileStorage {
     public static void saveStudents(ArrayList<Student> students,String fileName) {  
         try {
-            FileWriter writer = new FileWriter("students.txt");
+            FileWriter writer = new FileWriter(fileName);
             for (Student s : students) {
-                writer.write(s.getName() + ":" + s.getStatus() + "\n");
+                writer.write(s.fullName() + ":" + s.getStatus() + "\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);
@@ -24,9 +24,11 @@ public class FileStorage {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] parts=line.split(":");
-                String name=parts[0].trim();
+                String[] fio=parts[0].trim().split(" ",2);
+                String surname=fio[0];
+                String name=fio.length>1?fio[1]:"";
                 RegistrationStatus status=RegistrationStatus.valueOf(parts[1].trim());
-                students.add(new Student(name,status));
+                students.add(new Student(name,surname,status));
             }
             bufferedReader.close();
         } catch (IOException e) {

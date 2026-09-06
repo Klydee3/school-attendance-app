@@ -1,6 +1,4 @@
-Мартын:REJECTED
-Ахмет:APPROVED
-Test:PENDING
-Илья:APPROVED
-Абдул:APPROVED
-Арсений:PENDING
+Луковский Арсений:PENDING
+Запрутин Мартын:REJECTED
+Смирнова Анна:PENDING
+Петров Илья:APPROVED

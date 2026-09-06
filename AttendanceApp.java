@@ -5,9 +5,9 @@ import java.util.InputMismatchException;
 public class AttendanceApp {
     static HashMap<String,Student> students=new HashMap<>();
     static void loadRegistry() {
-        ArrayList<Student> list=FileStorage.loadStudents("students.txt");
-        for(Student s:list) {
-            students.put(s.getName(),s);
+        students.clear();
+        for (Student s:FileStorage.loadStudents("students.txt")) {
+            students.put(s.fullName(),s);
         }
     }
     static void printMenu() {
@@ -51,25 +51,29 @@ public class AttendanceApp {
         System.out.println(pendingCount + " в ожидании");
     }
     static void registerStudent(Scanner scann) {
-        System.out.print("Введите имя студента:");
-        String newName=scann.nextLine();
-        students.put(newName,new Student(newName));
-        System.out.println("Студент "+newName+" успешно зарегистрирован!(статус:ожидание)");
+        System.out.print("Введите имя и фамилию студента:");
+        String newFullName=scann.nextLine();
+        String[] fio=newFullName.split(" ",2);
+        String surName=fio[0];
+        String name=fio.length>1?fio[1]:"";
+        Student s=new Student(surName,name,RegistrationStatus.PENDING);
+        students.put(s.fullName(),s);
+        System.out.println("Студент "+s.fullName()+" успешно зарегистрирован!(статус:ожидание)");
     }
     static void reviewStudent(Scanner scann) {
-        System.out.print("Введите имя студента:");
-        String name=scann.nextLine();
-        if(students.containsKey(name)) {
-            Student target=students.get(name);
-            System.out.println("Текущий статус: Ожидание");
+        System.out.print("Введите имя и фамилию студента:");
+        String fullName=scann.nextLine();
+        if(students.containsKey(fullName)) {
+            Student target=students.get(fullName);
+            System.out.println("Текущий статус: "+target.getStatus());
             System.out.println("Подтвердить/отклонить?");
             String answer=scann.nextLine();
             if(answer.equalsIgnoreCase("Подтвердить")) {
                 target.setStatus(RegistrationStatus.APPROVED);
-                System.out.println("Студент "+name+" подтвержден!");
+                System.out.println("Студент "+fullName+" подтвержден!");
             } else if(answer.equalsIgnoreCase("Отклонить")) {
                 target.setStatus(RegistrationStatus.REJECTED);
-                System.out.println("Студент "+name+" отклонен!");
+                System.out.println("Студент "+fullName+" отклонен!");
             } else {
                 System.out.println("Вы ввели некорректный ответ");
             } 
