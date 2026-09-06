@@ -1,12 +1,14 @@
 const nameInput=document.getElementById("name-input");
 const message=document.getElementById("message");
+const surnameInput = document.getElementById("surname-input");
 document.getElementById("btn-yes").addEventListener("click", function() {
+    const surname = surnameInput.value.trim();
     const name=nameInput.value.trim();
-    if(name==="") {
-        message.textContent="Сначала введите имя!";
+    if (surname === "" || name === "") {
+        message.textContent = "Введите фамилию и имя!";
         return;
     }
-    fetch("/register?name="+encodeURIComponent(name))
+    fetch("/attend?name=" + encodeURIComponent(name) + "&surname=" + encodeURIComponent(surname))
     .then(function(response) {return response.json();})
     .then(function(data) {
         if(data.result==="ok") {
@@ -20,12 +22,13 @@ document.getElementById("btn-yes").addEventListener("click", function() {
     });
 });
 document.getElementById("btn-no").addEventListener("click", function() {
+    const surname = surnameInput.value.trim();
     const name=nameInput.value.trim();
-    if(name==="") {
+    if(name===""||surname==="") {
         message.textContent="Сначала введите имя!";
         return;
     }
-    fetch("/register?name="+encodeURIComponent(name)+"&decision=REJECTED")
+    fetch("/review?name=" + encodeURIComponent(name) + "&surname=" + encodeURIComponent(surname) + "&decision=REJECTED")
     .then(function(response) {return response.json();})
     .then(function(data) {
         if(data.result==="ok") {

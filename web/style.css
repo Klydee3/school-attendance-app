@@ -14,7 +14,9 @@ body {
 .btn-no {background-color:#e74c3c; color:white;}
 .container {max-width:420px; margin:0 auto;}
 .name-input {
-    width:100%;
-    padding:12px;
-    font-size:16px;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 8px;
 }
