@@ -1,0 +1,20 @@
+body {
+    background-color:#90b884;
+    font-family:Arial;
+    margin:0;
+    padding:16px;
+}
+.btn {
+    min-height:48px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+}
+.btn-yes {background-color:#2ecc71; color:white;}
+.btn-no {background-color:#e74c3c; color:white;}
+.container {max-width:420px; margin:0 auto;}
+.name-input {
+    width:100%;
+    padding:12px;
+    font-size:16px;
+}

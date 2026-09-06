@@ -69,6 +69,30 @@ public class AttendanceServer {
             sendJson(exchange, "{\"result\":\"ok\",\"message\":\"saved\"}");
         }
     }
+    static class PageHandler implements HttpHandler {
+        public void handle(HttpExchange exchange) throws IOException {
+            String path=exchange.getRequestURI().getPath();
+            if(path.equals("/")) {
+                path="/index.html";
+            }
+            java.io.File file=new java.io.File("web"+path);
+            if(!file.exists()||!file.isFile()) {
+                byte[] msg="404 Not Found".getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(404,msg.length);
+                OutputStream os=exchange.getResponseBody();
+                os.write(msg);
+                os.close();
+                return;
+            }
+                byte[] bytes=java.nio.file.Files.readAllBytes(file.toPath());
+                String contentType=path.endsWith(".css")?"text/css; charset=UTF-8":"text/html; charset=UTF-8";
+                exchange.getResponseHeaders().set("Content-Type", contentType);
+                exchange.sendResponseHeaders(200, bytes.length);
+                OutputStream os=exchange.getResponseBody();
+                os.write(bytes);
+                os.close();
+        }
+    }
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
@@ -76,6 +100,7 @@ public class AttendanceServer {
         server.createContext("/register", new RegisterHandler());
         server.createContext("/review", new ReviewHandler());
         server.createContext("/save", new SaveHandler());
+        server.createContext("/", new PageHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }
