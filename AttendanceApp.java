@@ -4,11 +4,19 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 public class AttendanceApp {
     static HashMap<String,Student> students=new HashMap<>();
+    static HashMap<String,Account> accounts=new HashMap<>();
+    static HashMap<String,Account> sessions=new HashMap<>();
     static void loadRegistry() {
         students.clear();
         for (Student s:FileStorage.loadStudents("students.txt")) {
             students.put(s.fullName(),s);
+            String login=s.fullName();
+            String password="1234";
+            Role role=Role.STUDENT;
+            accounts.put(login,new Account(login,password,role));
         }
+        accounts.put("teacher", new Account("teacher", "teacher123", Role.TEACHER));
+        accounts.put("admin", new Account("admin", "admin123", Role.ADMIN));
     }
     static void printMenu() {
         System.out.println("=== Школьная система ===");

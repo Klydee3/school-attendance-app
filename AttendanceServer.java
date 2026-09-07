@@ -33,11 +33,25 @@ public class AttendanceServer {
     }
     static class StudentsHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+            Account account = accountByToken(exchange);
+            if (account == null) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"не авторизован\"}");
+                return;
+            }
             sendJson(exchange, AttendanceApp.studentsToJson());
         }
     }
     static class RegisterHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+            Account account = accountByToken(exchange);
+            if (account == null) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"не авторизован\"}");
+                return;
+            }
+            if (account.getRole() != Role.ADMIN) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нет доступа\"}");
+                return;
+            }
             Map<String, String> params = parseQuery(exchange);
             String name=params.get("name");
             String surname=params.get("surname");
@@ -51,11 +65,21 @@ public class AttendanceServer {
                 return;
             }
             AttendanceApp.students.put(key,new Student(name,surname));
+            AttendanceApp.accounts.put(key,new Account(key,"1234",Role.STUDENT));
             sendJson(exchange,"{\"result\":\"ok\",\"name\":\""+key+"\"}");
         }
     }
     static class ReviewHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+            Account account=accountByToken(exchange);
+            if (account==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
+                return;
+            }
+            if (account.getRole()!=Role.TEACHER) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
+                return;
+            }
             Map<String, String> params=parseQuery(exchange);
             String name=params.get("name");
             String surname=params.get("surname");
@@ -74,8 +98,17 @@ public class AttendanceServer {
     }
     static class SaveHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+            Account account=accountByToken(exchange);
+            if (account==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
+                return;
+            }
+            if (account.getRole()!=Role.ADMIN) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
+                return;
+            }
             FileStorage.saveStudents(new ArrayList<>(AttendanceApp.students.values()),"students.txt");
-            sendJson(exchange, "{\"result\":\"ok\",\"message\":\"saved\"}");
+            sendJson(exchange,"{\"result\":\"ok\",\"message\":\"saved\"}");
         }
     }
     static class PageHandler implements HttpHandler {
@@ -106,18 +139,50 @@ public class AttendanceServer {
     }
     static class AttendHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
-            Map<String,String> params=parseQuery(exchange);
-            String name=params.get("name");
-            String surname=params.get("surname");
-            String key=surname+" "+name;
-            Student target=AttendanceApp.students.get(key);
-            if (target==null) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
-            } else {
-                target.setStatus(RegistrationStatus.PENDING);
-                sendJson(exchange, "{\"result\":\"ok\",\"name\":\""+key+"\"}");
+            Account account = accountByToken(exchange);
+            if (account == null) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"не авторизован\"}");
+                return;
             }
+            if (account.getRole() != Role.STUDENT) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нет доступа\"}");
+                return;
+            }
+            String key = account.getLogin();
+            Student target = AttendanceApp.students.get(key);
+            if (target == null) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
+                return;
+            }
+            target.setStatus(RegistrationStatus.PENDING);
+            sendJson(exchange, "{\"result\":\"ok\",\"name\":\"" + key + "\"}");
         }
+    }
+    static class LoginHandler implements HttpHandler {
+        public void handle(HttpExchange exchange) throws IOException {
+            Map<String, String> params = parseQuery(exchange);
+            String login = params.get("login");
+            String password = params.get("password");
+            if (login == null || password == null) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нужны логин и пароль\"}");
+                return;
+            }
+            Account account = AttendanceApp.accounts.get(login);
+            if (account == null || !account.getPassword().equals(password)) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"неверный логин или пароль\"}");
+                return;
+            }
+            String token = java.util.UUID.randomUUID().toString();
+            AttendanceApp.sessions.put(token, account);
+            sendJson(exchange, "{\"result\":\"ok\",\"token\":\"" + token + "\",\"role\":\"" + account.getRole() + "\"}");
+        }
+    }
+    static Account accountByToken(HttpExchange exchange) {
+        String token = parseQuery(exchange).get("token");
+        if (token == null) {
+            return null;
+        }
+        return AttendanceApp.sessions.get(token);
     }
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();
@@ -128,6 +193,7 @@ public class AttendanceServer {
         server.createContext("/save", new SaveHandler());
         server.createContext("/", new PageHandler());
         server.createContext("/attend", new AttendHandler());
+        server.createContext("/login", new LoginHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }
