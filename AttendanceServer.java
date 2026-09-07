@@ -154,7 +154,13 @@ public class AttendanceServer {
                 sendJson(exchange, "{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
                 return;
             }
-            target.setStatus(RegistrationStatus.PENDING);
+            Map<String, String> params = parseQuery(exchange);
+            String answer = params.get("answer");
+            if ("no".equals(answer)) {
+                target.setStatus(RegistrationStatus.REJECTED);
+            } else {
+                target.setStatus(RegistrationStatus.PENDING);
+            }
             sendJson(exchange, "{\"result\":\"ok\",\"name\":\"" + key + "\"}");
         }
     }

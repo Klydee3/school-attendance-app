@@ -7,14 +7,23 @@
     </head>
     <body>
         <div class="container">
-            <h1>Школьная система</h1>
-            <p>4 Сентября 20:50</p>
+        <h1>Школьная система</h1>
+        <div id="login-screen">
+            <input class="name-input" id="login-input" type="text" placeholder="Логин">
+            <input class="name-input" id="password-input" type="password" placeholder="Пароль">
+            <button class="btn btn-yes" id="login-btn">Войти</button>
+        </div>
+        <div id="student-screen" style="display:none">
             <p>Будете сегодня в школе?</p>
             <button class="btn btn-yes" id="btn-yes">Да</button>
             <button class="btn btn-no" id="btn-no">Нет</button>
-            <input class="name-input" id="surname-input" type="text" placeholder="Фамилия">
-            <input class="name-input" id="name-input" type="text" placeholder="Имя">
-            <p id="message"></p>
+        </div>
+        <div id="teacher-screen" style="display:none">
+            <h2>Кабинет сотрудника</h2>
+            <div id="pending-list"></div>
+        </div>
+        <p id="message"></p>
+        <button class="btn" id="logout-btn" style="display:none">Выйти</button>
         </div>
         <script src="app.js"></script>
     </body>
