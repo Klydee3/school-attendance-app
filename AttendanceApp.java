@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.InputMismatchException;
@@ -10,13 +11,21 @@ public class AttendanceApp {
         students.clear();
         for (Student s:FileStorage.loadStudents("students.txt")) {
             students.put(s.fullName(),s);
-            String login=s.fullName();
-            String password="1234";
-            Role role=Role.STUDENT;
-            accounts.put(login,new Account(login,password,role));
         }
-        accounts.put("teacher", new Account("teacher", "teacher123", Role.TEACHER));
-        accounts.put("admin", new Account("admin", "admin123", Role.ADMIN));
+        accounts.clear();
+        List<Account> loaded=FileStorage.loadAccounts("accounts.txt");
+        if(loaded.isEmpty()) {
+            for(Student a:students.values()) {
+                accounts.put(a.fullName(), new Account(a.fullName(), "1234", Role.STUDENT));
+            }
+            accounts.put("teacher",new Account("teacher","teacher123",Role.TEACHER));
+            accounts.put("admin",new Account("admin","admin123",Role.ADMIN));
+            FileStorage.saveAccounts(new ArrayList<>(accounts.values()),"accounts.txt");
+        } else {
+            for(Account a:loaded) {
+                accounts.put(a.getLogin(),a);
+            }
+        }
     }
     static void printMenu() {
         System.out.println("=== Школьная система ===");

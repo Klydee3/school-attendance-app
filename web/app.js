@@ -4,12 +4,14 @@ const studentScreen=document.getElementById("student-screen");
 const teacherScreen=document.getElementById("teacher-screen");
 const adminScreen=document.getElementById("admin-screen");
 const logoutBtn=document.getElementById("logout-btn");
+const changeBox=document.getElementById("change-box");
 function showScreen() {
     const role=localStorage.getItem("role");
     loginScreen.style.display="none";
     studentScreen.style.display="none";
     teacherScreen.style.display="none";
     adminScreen.style.display="none";
+    changeBox.style.display = "none";
     logoutBtn.style.display="none";
     if (role==="STUDENT") {
         studentScreen.style.display="block";
@@ -24,6 +26,9 @@ function showScreen() {
         loadAll();
     } else {
         loginScreen.style.display="block";
+    }
+    if (role !== null) {
+        changeBox.style.display = "block";
     }
 }
 document.getElementById("login-btn").addEventListener("click", function() {
@@ -175,6 +180,29 @@ document.getElementById("save-btn").addEventListener("click",function() {
         .then(function(r) {return r.json();})
         .then(function(data) {
             message.textContent=data.result==="ok"?"Сохранено в файл.":"Ошибка: "+data.message;
+        })
+        .catch(function() {message.textContent="Сервер недоступен";});
+});
+document.getElementById("change-btn").addEventListener("click",function() {
+    const oldPass=document.getElementById("old-pass").value.trim();
+    const newPass=document.getElementById("new-pass").value.trim();
+    if(oldPass===""||newPass==="") {
+        message.textContent="Введите оба пароля";
+        return;
+    }
+    const token=localStorage.getItem("token");
+    fetch("/change-password?token="+encodeURIComponent(token)
+        +"&oldPassword="+encodeURIComponent(oldPass)
+        +"&newPassword="+encodeURIComponent(newPass))
+        .then(function(r) {return r.json();})
+        .then(function(data) {
+            if (data.result==="ok") {
+                message.textContent="Пароль изменён.";
+                document.getElementById("old-pass").value="";
+                document.getElementById("new-pass").value="";
+            } else {
+                message.textContent="Ошибка: "+data.message;
+            }
         })
         .catch(function() {message.textContent="Сервер недоступен";});
 });

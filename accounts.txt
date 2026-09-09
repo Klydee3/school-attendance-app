@@ -1,0 +1,7 @@
+Луковский Арсений:1234:STUDENT
+teacher:super123:TEACHER
+Запрутин Мартын:1234:STUDENT
+Смирнова Анна:1234:STUDENT
+Петров Илья:12345678:STUDENT
+admin:admin123:ADMIN
+Кравцова Мария:12345678:STUDENT

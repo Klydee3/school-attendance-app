@@ -108,6 +108,7 @@ public class AttendanceServer {
                 return;
             }
             FileStorage.saveStudents(new ArrayList<>(AttendanceApp.students.values()),"students.txt");
+            FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
             sendJson(exchange,"{\"result\":\"ok\",\"message\":\"saved\"}");
         }
     }
@@ -166,21 +167,48 @@ public class AttendanceServer {
     }
     static class LoginHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
-            Map<String, String> params = parseQuery(exchange);
-            String login = params.get("login");
-            String password = params.get("password");
-            if (login == null || password == null) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нужны логин и пароль\"}");
+            Map<String,String> params=parseQuery(exchange);
+            String login=params.get("login");
+            String password=params.get("password");
+            if (login==null||password==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нужны логин и пароль\"}");
                 return;
             }
-            Account account = AttendanceApp.accounts.get(login);
-            if (account == null || !account.getPassword().equals(password)) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"неверный логин или пароль\"}");
+            Account account=AttendanceApp.accounts.get(login);
+            if (account==null||!account.getPassword().equals(password)) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"неверный логин или пароль\"}");
                 return;
             }
-            String token = java.util.UUID.randomUUID().toString();
-            AttendanceApp.sessions.put(token, account);
-            sendJson(exchange, "{\"result\":\"ok\",\"token\":\"" + token + "\",\"role\":\"" + account.getRole() + "\"}");
+            String token=java.util.UUID.randomUUID().toString();
+            AttendanceApp.sessions.put(token,account);
+            sendJson(exchange,"{\"result\":\"ok\",\"token\":\""+token+"\",\"role\":\""+account.getRole()+"\"}");
+        }
+    }
+    static class ChangePasswordHandler implements HttpHandler {
+        public void handle(HttpExchange exchange) throws IOException {
+            Account account=accountByToken(exchange);
+            if(account==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
+                return;
+            }
+            Map<String, String> params=parseQuery(exchange);
+            String oldPassword=params.get("oldPassword");
+            String newPassword=params.get("newPassword");
+            if (oldPassword==null||newPassword==null) {
+                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нужны старый и новый пароль\"}");
+                return;
+            }
+            if(!account.getPassword().equals(oldPassword)) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"неверный текущий пароль\"}");
+                return;
+            }
+            if(newPassword.length()<8) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"новый пароль слишком короткий(не менее 8 символов)\"}");
+                return;
+            }
+            account.setPassword(newPassword);
+            FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
+            sendJson(exchange,"{\"result\":\"ok\",\"message\":\"пароль успешно изменён!\"}");
         }
     }
     static Account accountByToken(HttpExchange exchange) {
@@ -200,6 +228,7 @@ public class AttendanceServer {
         server.createContext("/", new PageHandler());
         server.createContext("/attend", new AttendHandler());
         server.createContext("/login", new LoginHandler());
+        server.createContext("/change-password", new ChangePasswordHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }

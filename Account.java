@@ -16,4 +16,7 @@ public class Account {
     public Role getRole() {
         return role;
     }
+    public void setPassword(String password) {
+        this.password=password;
+    }
 }
