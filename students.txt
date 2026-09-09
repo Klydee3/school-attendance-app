@@ -1,4 +1,5 @@
-Луковский Арсений:PENDING
+Луковский Арсений:APPROVED
 Запрутин Мартын:REJECTED
-Смирнова Анна:PENDING
+Смирнова Анна:REJECTED
 Петров Илья:APPROVED
+Кравцова Мария:APPROVED
