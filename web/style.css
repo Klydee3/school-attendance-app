@@ -1,6 +1,6 @@
 body {
-    background-color:#90b884;
-    font-family:Arial;
+    background-color:#b3afaf;
+    font-family:Georgia;
     margin:0;
     padding:16px;
 }
@@ -8,10 +8,20 @@ body {
     min-height:48px;
     font-size:18px;
     border:none;
-    border-radius:8px;
+    border-radius:16px;
 }
-.btn-yes {background-color:#2ecc71; color:white;}
-.btn-no {background-color:#e74c3c; color:white;}
+.btn-yes {
+    background-color:#2ecc71; 
+    color:white;
+    margin-top:10px;
+    
+}
+.btn-no {
+    background-color:#e74c3c; 
+    color:white;
+    margin-top:10px;
+    
+}
 .container {max-width:420px; margin:0 auto;}
 .name-input {
     display: block;
@@ -19,10 +29,20 @@ body {
     padding: 12px;
     font-size: 16px;
     margin-top: 8px;
+    border-radius:16px;
 }
 .pending-row {
     display:flex;
     gap:8px;
     align-items:center;
     margin-top:8px;
+}
+#save-btn {
+    margin-top:10px;
+}
+#change-btn {
+    margin-top:10px;
+}
+#session-buttons {
+    gap:10px;
 }

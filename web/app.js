@@ -4,31 +4,27 @@ const studentScreen=document.getElementById("student-screen");
 const teacherScreen=document.getElementById("teacher-screen");
 const adminScreen=document.getElementById("admin-screen");
 const logoutBtn=document.getElementById("logout-btn");
-const changeBox=document.getElementById("change-box");
+const sessionButtons=document.getElementById("session-buttons");
+const changePassButton=document.getElementById("change-pass-button");
 function showScreen() {
     const role=localStorage.getItem("role");
     loginScreen.style.display="none";
     studentScreen.style.display="none";
     teacherScreen.style.display="none";
     adminScreen.style.display="none";
-    changeBox.style.display = "none";
-    logoutBtn.style.display="none";
+    sessionButtons.style.display="none";
     if (role==="STUDENT") {
         studentScreen.style.display="block";
-        logoutBtn.style.display="block";
     } else if(role==="TEACHER") {
         teacherScreen.style.display="block";
-        logoutBtn.style.display="block";
         loadPending();
     } else if(role==="ADMIN") {
         adminScreen.style.display="block";
-        logoutBtn.style.display="block"
-        loadAll();
     } else {
         loginScreen.style.display="block";
     }
-    if (role !== null) {
-        changeBox.style.display = "block";
+    if(role!==null) {
+        sessionButtons.style.display="flex";
     }
 }
 document.getElementById("login-btn").addEventListener("click", function() {
@@ -128,36 +124,14 @@ function review(student,decision) {
     })
     .catch(function() {message.textContent="Сервер недоступен";});
 }
-function loadAll() {
-    const token=localStorage.getItem("token");
-    fetch("/students?token="+encodeURIComponent(token))
-    .then(function(r) {return r.json();})
-    .then(function(students) {
-        if(!Array.isArray(students)) {
-            message.textContent="Сессия устарела, войдите снова.";
-            return;
-        }
-        const list=document.getElementById("all-list");
-        list.textContent="";
-        students.forEach(function(s) {
-            const row=document.createElement("div");
-            row.className="pending-row";
-            const label=document.createElement("span");
-            label.textContent=s.surname+" "+s.name+"---"+s.status;
-            row.appendChild(label);
-            list.appendChild(row);
-        });
-    })
-    .catch(function() {message.textContent+"Сервер недоступен";});
-}
 document.getElementById("reg-btn").addEventListener("click",function() {
     const surname=document.getElementById("reg-surname").value.trim();
     const name=document.getElementById("reg-name").value.trim();
-    if (surname===""||name ==="") {
+    if (surname===""||name==="") {
         message.textContent="Введите фамилию и имя";
         return;
     }
-    const token = localStorage.getItem("token");
+    const token=localStorage.getItem("token");
     fetch("/register?token="+encodeURIComponent(token)
         +"&name="+encodeURIComponent(name)
         +"&surname="+encodeURIComponent(surname))
@@ -167,7 +141,6 @@ document.getElementById("reg-btn").addEventListener("click",function() {
                 message.textContent="Ученик добавлен.";
                 document.getElementById("reg-surname").value="";
                 document.getElementById("reg-name").value="";
-                loadAll();
             } else {
                 message.textContent="Ошибка: "+data.message;
             }
@@ -183,27 +156,10 @@ document.getElementById("save-btn").addEventListener("click",function() {
         })
         .catch(function() {message.textContent="Сервер недоступен";});
 });
-document.getElementById("change-btn").addEventListener("click",function() {
-    const oldPass=document.getElementById("old-pass").value.trim();
-    const newPass=document.getElementById("new-pass").value.trim();
-    if(oldPass===""||newPass==="") {
-        message.textContent="Введите оба пароля";
-        return;
-    }
-    const token=localStorage.getItem("token");
-    fetch("/change-password?token="+encodeURIComponent(token)
-        +"&oldPassword="+encodeURIComponent(oldPass)
-        +"&newPassword="+encodeURIComponent(newPass))
-        .then(function(r) {return r.json();})
-        .then(function(data) {
-            if (data.result==="ok") {
-                message.textContent="Пароль изменён.";
-                document.getElementById("old-pass").value="";
-                document.getElementById("new-pass").value="";
-            } else {
-                message.textContent="Ошибка: "+data.message;
-            }
-        })
-        .catch(function() {message.textContent="Сервер недоступен";});
+changePassButton.addEventListener("click",function() {
+    location.href="change.html";
+});
+document.getElementById("students-btn").addEventListener("click",function() {
+    location.href="student-list.html";
 });
 showScreen();

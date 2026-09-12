@@ -218,6 +218,31 @@ public class AttendanceServer {
         }
         return AttendanceApp.sessions.get(token);
     }
+    static class DeleteStudentHandler implements HttpHandler {
+        public void handle(HttpExchange exchange) throws IOException {
+            Account account=accountByToken(exchange);
+            if(account==null) {
+                sendJson(exchange,"{\"result\":error\",\"message\":\"не авторизован\"}");
+                return;
+            }
+            if(account.getRole()!=Role.ADMIN) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"недостаточно прав\"}");
+                return;
+            }
+            Map<String,String> params=parseQuery(exchange);
+            String name=params.get("name");
+            String surname=params.get("surname");
+            String key=surname+" "+name;
+            if(AttendanceApp.students.remove(key)==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"ученик не найден\"}");
+                return;
+            }
+            AttendanceApp.accounts.remove(key);
+            FileStorage.saveStudents(new ArrayList<>(AttendanceApp.students.values()),"students.txt");
+            FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
+            sendJson(exchange,"{\"result\":\"ok\",\"message\":\"ученик удален\"}");
+        }
+    }
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
@@ -229,6 +254,7 @@ public class AttendanceServer {
         server.createContext("/attend", new AttendHandler());
         server.createContext("/login", new LoginHandler());
         server.createContext("/change-password", new ChangePasswordHandler());
+        server.createContext("/delete-student",new DeleteStudentHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }

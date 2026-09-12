@@ -1,5 +1,3 @@
 Луковский Арсений:APPROVED
-Запрутин Мартын:REJECTED
-Смирнова Анна:REJECTED
-Петров Илья:APPROVED
+Смолькин Илья:APPROVED
 Кравцова Мария:APPROVED

@@ -27,17 +27,14 @@
             <input class="name-input" id="reg-surname" type="text" placeholder="Фамилия">
             <input class="name-input" id="reg-name" type="text" placeholder="Имя">
             <button class="btn btn-yes" id="reg-btn">Зарегистрировать ученика</button>
-            <button class="btn" id="save-btn">Сохранить в файл</button>
-            <div id="all-list"></div>
-        </div>
-        <div id="change-box" style="display:none">
-            <h2>Смена пароля</h2>
-            <input class="name-input" id="old-pass" type="password" placeholder="Текущий пароль">
-            <input class="name-input" id="new-pass" type="password" placeholder="Новый пароль (минимум 4 символа)">
-            <button class="btn" id="change-btn">Сменить пароль</button>
+            <button class="btn save-btn" id="save-btn">Сохранить в файл</button>
+            <button class="btn" id="students-btn">Список учеников</button>
         </div>
         <p id="message"></p>
-        <button class="btn" id="logout-btn" style="display:none">Выйти</button>
+        <div id="session-buttons" style="display:none">
+            <button class="btn" id="logout-btn">Выйти</button>
+            <button class="btn" id="change-pass-button">Сменить пароль</button>
+        </div>
         </div>
         <script src="app.js"></script>
     </body>
