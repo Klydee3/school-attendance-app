@@ -5,7 +5,7 @@ if(token===null||role!=="ADMIN") {
     location.href="index.html";
 }
 function loadAll() {
-    fetch("/students",{headers:{"Authorization":"Bearer "+token}})
+    fetch("/api/students",{headers:{"Authorization":"Bearer "+token}})
     .then(function(r) {return r.json();})
     .then(function(students) {
         if(!Array.isArray(students)) {
@@ -31,7 +31,7 @@ function loadAll() {
     .catch(function() {message.textContent="Сервер не доступен";});
 }
 function removeStudent(student) {
-    fetch("/delete-student?name="+encodeURIComponent(student.name)+"&surname="+encodeURIComponent(student.surname),
+    fetch("/api/delete-student?name="+encodeURIComponent(student.name)+"&surname="+encodeURIComponent(student.surname),
     {headers:{"Authorization":"Bearer "+token}})
     .then(function(r){return r.json();})
     .then(function(data) {

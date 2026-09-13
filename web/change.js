@@ -11,9 +11,9 @@ document.getElementById("change-btn").addEventListener("click",function() {
         return;
     }
     const token=localStorage.getItem("token");
-    fetch("/change-password?token="+encodeURIComponent(token)
-        +"&oldPassword="+encodeURIComponent(oldPass)
-        +"&newPassword="+encodeURIComponent(newPass))
+    fetch("/api/change-password?&oldPassword="+encodeURIComponent(oldPass)
+        +"&newPassword="+encodeURIComponent(newPass),
+        {headers:{"Authorization":"Bearer "+token}})
         .then(function(r) {return r.json();})
         .then(function(data) {
             if (data.result==="ok") {

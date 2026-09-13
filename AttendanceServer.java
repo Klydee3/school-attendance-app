@@ -212,16 +212,11 @@ public class AttendanceServer {
         }
     }
     static Account accountByToken(HttpExchange exchange) {
-        String token=null;
         String auth=exchange.getRequestHeaders().getFirst("Authorization");
-        if(auth!=null&&auth.startsWith("Bearer")) {
-            token=auth.substring(7);
-        }else{
-            token=parseQuery(exchange).get("token");
-        }
-        if (token==null) {
+        if(auth==null||!auth.startsWith("Bearer")) {
             return null;
         }
+        String token=auth.substring(7);
         return AttendanceApp.sessions.get(token);
     }
     static class DeleteStudentHandler implements HttpHandler {
@@ -252,15 +247,15 @@ public class AttendanceServer {
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        server.createContext("/students", new StudentsHandler());
-        server.createContext("/register", new RegisterHandler());
-        server.createContext("/review", new ReviewHandler());
-        server.createContext("/save", new SaveHandler());
+        server.createContext("/api/students", new StudentsHandler());
+        server.createContext("/api/register", new RegisterHandler());
+        server.createContext("/api/review", new ReviewHandler());
+        server.createContext("/api/save", new SaveHandler());
         server.createContext("/", new PageHandler());
-        server.createContext("/attend", new AttendHandler());
-        server.createContext("/login", new LoginHandler());
-        server.createContext("/change-password", new ChangePasswordHandler());
-        server.createContext("/delete-student",new DeleteStudentHandler());
+        server.createContext("/api/attend", new AttendHandler());
+        server.createContext("/api/login", new LoginHandler());
+        server.createContext("/api/change-password", new ChangePasswordHandler());
+        server.createContext("/api/delete-student",new DeleteStudentHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }
