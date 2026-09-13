@@ -212,8 +212,14 @@ public class AttendanceServer {
         }
     }
     static Account accountByToken(HttpExchange exchange) {
-        String token = parseQuery(exchange).get("token");
-        if (token == null) {
+        String token=null;
+        String auth=exchange.getRequestHeaders().getFirst("Authorization");
+        if(auth!=null&&auth.startsWith("Bearer")) {
+            token=auth.substring(7);
+        }else{
+            token=parseQuery(exchange).get("token");
+        }
+        if (token==null) {
             return null;
         }
         return AttendanceApp.sessions.get(token);

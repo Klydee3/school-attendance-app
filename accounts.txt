@@ -1,5 +1,3 @@
 teacher:super123:TEACHER
-Луковский Арсений:1234:STUDENT
 Смолькин Илья:12345678:STUDENT
-admin:12345678a:ADMIN
-Кравцова Мария:1234:STUDENT
+admin:12345678:ADMIN

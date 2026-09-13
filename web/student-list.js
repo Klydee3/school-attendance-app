@@ -5,7 +5,7 @@ if(token===null||role!=="ADMIN") {
     location.href="index.html";
 }
 function loadAll() {
-    fetch("/students?token="+encodeURIComponent(token))
+    fetch("/students",{headers:{"Authorization":"Bearer "+token}})
     .then(function(r) {return r.json();})
     .then(function(students) {
         if(!Array.isArray(students)) {
@@ -31,19 +31,19 @@ function loadAll() {
     .catch(function() {message.textContent="Сервер не доступен";});
 }
 function removeStudent(student) {
-    fetch("/delete-student?token="+encodeURIComponent(token)
-    +"&name="+encodeURIComponent(student.name)
-    +"&surname="+encodeURIComponent(student.surname))
+    fetch("/delete-student?name="+encodeURIComponent(student.name)+"&surname="+encodeURIComponent(student.surname),
+    {headers:{"Authorization":"Bearer "+token}})
     .then(function(r){return r.json();})
     .then(function(data) {
         if(data.result==="ok") {
             message.textContent="Ученик удален.";
+            setTimeout(function(){message.textContent="";},2000)
             loadAll();
         } else {
             message.textContent="Ошибка: "+data.message;
         }
     })
-    .catch(function() {message.textContent="Сервер не доступен";});
+    .catch(function(e) {console.error(e); message.textContent="Сервер не доступен";});
 }
 document.getElementById("back-btn").addEventListener("click",function() {
     location.href="index.html";
