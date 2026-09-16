@@ -11,9 +11,14 @@ document.getElementById("change-btn").addEventListener("click",function() {
         return;
     }
     const token=localStorage.getItem("token");
-    fetch("/api/change-password?&oldPassword="+encodeURIComponent(oldPass)
-        +"&newPassword="+encodeURIComponent(newPass),
-        {headers:{"Authorization":"Bearer "+token}})
+    fetch("/api/change-password", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded",
+            "Authorization":"Bearer "+token
+        },
+        body:"oldPassword="+encodeURIComponent(oldPass)+"&newPassword="+encodeURIComponent(newPass)
+    })
         .then(function(r) {return r.json();})
         .then(function(data) {
             if (data.result==="ok") {

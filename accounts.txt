@@ -1,3 +1,4 @@
+Рахметов Абдул:1234:STUDENT
 teacher:super123:TEACHER
 Смолькин Илья:12345678:STUDENT
-admin:12345678a:ADMIN
+admin:12345678:ADMIN

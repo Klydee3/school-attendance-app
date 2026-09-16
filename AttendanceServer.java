@@ -23,13 +23,16 @@ public class AttendanceServer {
         }
         return params;
     }
-    static void sendJson(HttpExchange exchange, String json) throws IOException {
+    static void sendJson(HttpExchange exchange,int code,String json) throws IOException {
         byte[] bytes=json.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type","application/json;charset=UTF-8");
-        exchange.sendResponseHeaders(200,bytes.length);
+        exchange.sendResponseHeaders(code,bytes.length);
         OutputStream os=exchange.getResponseBody();
         os.write(bytes);
         os.close();
+    }
+    static void sendJson(HttpExchange exchange,String json) throws IOException {
+        sendJson(exchange,200,json);
     }
     static class StudentsHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
@@ -43,16 +46,16 @@ public class AttendanceServer {
     }
     static class RegisterHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
-            Account account = accountByToken(exchange);
-            if (account == null) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"не авторизован\"}");
+            Account account=accountByToken(exchange);
+            if (account==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            if (account.getRole() != Role.ADMIN) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нет доступа\"}");
+            if (account.getRole()!=Role.ADMIN) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
                 return;
             }
-            Map<String, String> params = parseQuery(exchange);
+            Map<String,String>params=parseBody(exchange);
             String name=params.get("name");
             String surname=params.get("surname");
             if (name==null||surname==null||name.isEmpty()||surname.isEmpty()) {
@@ -167,7 +170,11 @@ public class AttendanceServer {
     }
     static class LoginHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
-            Map<String,String> params=parseQuery(exchange);
+            if(!exchange.getRequestMethod().equals("POST")) {
+                sendJson(exchange,405,"{\"result\":\"error\",\"message\":\"нужен POST\"}");
+                return;
+            }
+            Map<String,String> params=parseBody(exchange);
             String login=params.get("login");
             String password=params.get("password");
             if (login==null||password==null) {
@@ -191,7 +198,7 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            Map<String, String> params=parseQuery(exchange);
+            Map<String, String> params=parseBody(exchange);
             String oldPassword=params.get("oldPassword");
             String newPassword=params.get("newPassword");
             if (oldPassword==null||newPassword==null) {
@@ -243,6 +250,20 @@ public class AttendanceServer {
             FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
             sendJson(exchange,"{\"result\":\"ok\",\"message\":\"ученик удален\"}");
         }
+    }
+    static Map<String,String> parseBody(HttpExchange exchange) throws IOException {
+        String body=new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        Map<String,String> result=new HashMap<>();
+        if(body.isEmpty()) {
+            return result;
+        }
+        for(String pair:body.split("&")) {
+            String kv[]=pair.split("=",2);
+            if(kv.length==2) {
+                result.put(URLDecoder.decode(kv[0],"UTF-8"),URLDecoder.decode(kv[1],"UTF-8"));
+            }
+        }
+        return result;
     }
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();

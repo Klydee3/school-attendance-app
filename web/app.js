@@ -34,7 +34,11 @@ document.getElementById("login-btn").addEventListener("click", function() {
         message.textContent="Введите логин и пароль";
         return;
     }
-    fetch("/api/login?login="+encodeURIComponent(login)+"&password="+encodeURIComponent(password))
+    fetch("/api/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded"},
+        body:"login="+encodeURIComponent(login)+"&password="+encodeURIComponent(password)
+    })
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (data.result==="ok") {
@@ -132,9 +136,14 @@ document.getElementById("reg-btn").addEventListener("click",function() {
         return;
     }
     const token=localStorage.getItem("token");
-    fetch("/api/register?name="+encodeURIComponent(name)
-        +"&surname="+encodeURIComponent(surname),
-        {headers:{"Authorization":"Bearer "+token}})
+    fetch("/api/register", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded",
+            "Authorization":"Bearer "+token
+        },
+        body:"name="+encodeURIComponent(name)+"&surname="+encodeURIComponent(surname)
+    })
         .then(function(r) {return r.json();})
         .then(function(data) {
             if (data.result==="ok") {
