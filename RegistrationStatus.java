@@ -1,5 +1,3 @@
-enum RegistrationStatus {
-    PENDING,
-    APPROVED,
-    REJECTED
+public enum RegistrationStatus {
+PENDING,APPROVED,REJECTED
 }

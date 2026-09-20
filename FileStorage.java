@@ -4,10 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 public class FileStorage {
     public static void saveStudents(ArrayList<Student> students,String fileName) {  
         try {
-            FileWriter writer = new FileWriter(fileName);
+            OutputStreamWriter writer=new OutputStreamWriter(
+				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Student s : students) {
                 writer.write(s.fullName() + ":" + s.getStatus() + "\n");
             }
@@ -20,10 +26,10 @@ public class FileStorage {
     public static ArrayList<Student> loadStudents(String fileName) {
         ArrayList<Student> students=new ArrayList<>();
         try {
-            FileReader reader = new FileReader(fileName);
-            BufferedReader bufferedReader = new BufferedReader(reader);
+            BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(fileName),StandardCharsets.UTF_8));
             String line;
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line=reader.readLine())!=null) {
                 String[] parts=line.split(":");
                 String[] fio=parts[0].trim().split(" ",2);
                 String surname=fio[0];
@@ -31,7 +37,7 @@ public class FileStorage {
                 RegistrationStatus status=RegistrationStatus.valueOf(parts[1].trim());
                 students.add(new Student(name,surname,status));
             }
-            bufferedReader.close();
+            reader.close();
         } catch (IOException e) {
             System.out.println("Ошибка чтения: " + e.getMessage());
         }
@@ -44,7 +50,8 @@ public class FileStorage {
             return result;
         }
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            BufferedReader reader=new BufferedReader(
+				new InputStreamReader(new FileInputStream(fileName),StandardCharsets.UTF_8));
             String line;
             while ((line=reader.readLine()) != null) {
                 if(line.trim().isEmpty()) {
@@ -70,7 +77,8 @@ public class FileStorage {
             .append(a.getRole()).append("\n");
         }
         try {
-            FileWriter writer=new FileWriter(fileName);
+            OutputStreamWriter writer=new OutputStreamWriter(
+				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Account a:accounts) {
                 writer.write(a.getLogin()+":"+a.getPassword()+":"+a.getRole()+"\n");
             }
