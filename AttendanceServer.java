@@ -68,7 +68,10 @@ public class AttendanceServer {
                 return;
             }
             AttendanceApp.students.put(key,new Student(name,surname));
-            AttendanceApp.accounts.put(key,new Account(key,"1234",Role.STUDENT));
+			String password="12345678";
+            String salt=AttendanceApp.newSalt();
+			String hash=AttendanceApp.hashPassword(password,salt);
+			AttendanceApp.accounts.put(key,new Account(key,Role.STUDENT,salt,hash));
             sendJson(exchange,"{\"result\":\"ok\",\"name\":\""+key+"\"}");
         }
     }
@@ -182,7 +185,7 @@ public class AttendanceServer {
                 return;
             }
             Account account=AttendanceApp.accounts.get(login);
-            if (account==null||!account.getPassword().equals(password)) {
+            if (account==null||!AttendanceApp.hashPassword(password,account.getSalt()).equals(account.getPasswordHash())) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"неверный логин или пароль\"}");
                 return;
             }
@@ -205,7 +208,7 @@ public class AttendanceServer {
                 sendJson(exchange, "{\"result\":\"error\",\"message\":\"нужны старый и новый пароль\"}");
                 return;
             }
-            if(!account.getPassword().equals(oldPassword)) {
+            if (!AttendanceApp.hashPassword(oldPassword,account.getSalt()).equals(account.getPasswordHash())) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"неверный текущий пароль\"}");
                 return;
             }
@@ -213,7 +216,9 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"новый пароль слишком короткий(не менее 8 символов)\"}");
                 return;
             }
-            account.setPassword(newPassword);
+            String salt=AttendanceApp.newSalt();
+			account.setSalt(salt);
+			account.setPasswordHash(AttendanceApp.hashPassword(newPassword,salt));
             FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
             sendJson(exchange,"{\"result\":\"ok\",\"message\":\"пароль успешно изменён!\"}");
         }
@@ -267,6 +272,12 @@ public class AttendanceServer {
     }
     public static void main(String[] args) throws IOException {
         AttendanceApp.loadRegistry();
+		if (AttendanceApp.accounts.isEmpty()) {
+			String salt=AttendanceApp.newSalt();
+			Account admin=new Account("admin",Role.ADMIN,salt,AttendanceApp.hashPassword("12345678",salt));
+			AttendanceApp.accounts.put("admin",admin);
+			FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
+		}
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/api/students", new StudentsHandler());
         server.createContext("/api/register", new RegisterHandler());

@@ -1,3 +1,4 @@
-teacher:super123:TEACHER
-Смолькин Илья:12345678:STUDENT
-admin:12345678:ADMIN
+teacher:TEACHER:Y3m+QPLTM6e8m2LUMVdROg==:HUPiYD+Mcy7u3W6hezUXVCXvacgQE/LKArPUCugoaPY=
+Смолькин Илья:STUDENT:ga0MBABmFNOJRZIq/DcwMw==:ZtmFg/QcSLHo94KPP4BC2z1XvfGrvuMhH3eH6QpvV9w=
+admin:ADMIN:E0Tv372hhLrVroD/HDUTLg==:dxAJfuYBimYEdrO1Gd54eXWbcpQvSsES19eZusJYWQ4=
+Кравцова Мария:STUDENT:6nEO6SJ844igmYAaeGDkaw==:MuFlhFKWlWSGIx+jg8PCYoKfceLaLUxntwkUEPrTF7I=

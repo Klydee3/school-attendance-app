@@ -1,22 +1,18 @@
 public class Account {
     private String login;
-    private String password;
     private Role role;
-    Account(String login,String password,Role role) {
+    private String salt;
+    private String passwordHash;
+    public Account(String login,Role role,String salt,String passwordHash) {
         this.login=login;
-        this.password=password;
         this.role=role;
+        this.salt=salt;
+        this.passwordHash=passwordHash;
     }
-    public String getLogin() {
-        return login;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public Role getRole() {
-        return role;
-    }
-    public void setPassword(String password) {
-        this.password=password;
-    }
+    public String getLogin(){return login;}
+    public Role getRole(){return role;}
+    public String getSalt(){return salt;}
+    public String getPasswordHash(){return passwordHash;}
+    public void setSalt(String salt){this.salt=salt;}
+    public void setPasswordHash(String passwordHash){this.passwordHash=passwordHash;}
 }

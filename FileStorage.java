@@ -57,11 +57,11 @@ public class FileStorage {
                 if(line.trim().isEmpty()) {
                     continue;
                 }
-                String[] parts=line.split(":",3);
-                if(parts.length<3) {
-                    continue;
-                }
-                result.add(new Account(parts[0],parts[1],Role.valueOf(parts[2])));
+                String[] parts=line.split(":",4);
+				if (parts.length<4) {
+					continue;
+				}
+				result.add(new Account(parts[0],Role.valueOf(parts[1]),parts[2],parts[3]));
             }
             reader.close();
         } catch (IOException e) {
@@ -70,17 +70,11 @@ public class FileStorage {
         return result;
     }
     static void saveAccounts(List<Account> accounts,String fileName) {
-        StringBuilder sb=new StringBuilder();
-        for(Account a:accounts) {
-            sb.append(a.getLogin()).append(":")
-            .append(a.getPassword()).append(":")
-            .append(a.getRole()).append("\n");
-        }
         try {
             OutputStreamWriter writer=new OutputStreamWriter(
 				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Account a:accounts) {
-                writer.write(a.getLogin()+":"+a.getPassword()+":"+a.getRole()+"\n");
+                writer.write(a.getLogin()+":"+a.getRole()+":"+a.getSalt()+":"+a.getPasswordHash()+"\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);

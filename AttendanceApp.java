@@ -3,6 +3,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.security.SecureRandom;
+import java.util.Base64;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 public class AttendanceApp {
     static HashMap<String,Student> students=new HashMap<>();
     static HashMap<String,Account> accounts=new HashMap<>();
@@ -16,10 +20,13 @@ public class AttendanceApp {
         List<Account> loaded=FileStorage.loadAccounts("accounts.txt");
         if(loaded.isEmpty()) {
             for(Student a:students.values()) {
-                accounts.put(a.fullName(), new Account(a.fullName(), "1234", Role.STUDENT));
+                String studentSalt=newSalt();
+				accounts.put(a.fullName(),new Account(a.fullName(),Role.STUDENT,studentSalt,hashPassword("12345678",studentSalt)));
             }
-            accounts.put("teacher",new Account("teacher","teacher123",Role.TEACHER));
-            accounts.put("admin",new Account("admin","admin123",Role.ADMIN));
+            String teacherSalt=newSalt();
+			accounts.put("teacher",new Account("teacher",Role.TEACHER,teacherSalt,hashPassword("12345678",teacherSalt)));
+            String adminSalt=newSalt();
+			accounts.put("admin",new Account("admin",Role.ADMIN,adminSalt,hashPassword("12345678",adminSalt)));
             FileStorage.saveAccounts(new ArrayList<>(accounts.values()),"accounts.txt");
         } else {
             for(Account a:loaded) {
@@ -116,6 +123,22 @@ public class AttendanceApp {
     static void showAllJson() {
         System.out.println(studentsToJson());
     }
+	static String newSalt() {
+		byte[] salt=new byte[16];
+		new SecureRandom().nextBytes(salt);
+		return Base64.getEncoder().encodeToString(salt);
+		}
+	static String hashPassword(String password, String salt) {
+		try {
+			PBEKeySpec spec=new PBEKeySpec(password.toCharArray(),
+				Base64.getDecoder().decode(salt),10000,256);
+			SecretKeyFactory factory=SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			byte[] hash=factory.generateSecret(spec).getEncoded();
+			return Base64.getEncoder().encodeToString(hash);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
     public static void main(String[] args) {
         loadRegistry();
         Scanner scann=new Scanner(System.in);
