@@ -36,9 +36,9 @@ public class AttendanceServer {
     }
     static class StudentsHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
-            Account account = accountByToken(exchange);
-            if (account == null) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"не авторизован\"}");
+            Account account=accountByToken(exchange);
+            if (account==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
             sendJson(exchange, AttendanceApp.studentsToJson());
@@ -58,8 +58,9 @@ public class AttendanceServer {
             Map<String,String>params=parseBody(exchange);
             String name=params.get("name");
             String surname=params.get("surname");
-            if (name==null||surname==null||name.isEmpty()||surname.isEmpty()) {
-                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нужны имя и фамилия\"}");
+			String className=params.get("className");
+            if (name==null||surname==null||name.isEmpty()||surname.isEmpty()||className.isEmpty()) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нужны имя, фамилия и класс\"}");
                 return;
             }
             String key=surname+" "+name;
@@ -67,7 +68,7 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"уже есть в списках\"}");
                 return;
             }
-            AttendanceApp.students.put(key,new Student(name,surname));
+            AttendanceApp.students.put(key,new Student(name,surname,className));
 			String password="12345678";
             String salt=AttendanceApp.newSalt();
 			String hash=AttendanceApp.hashPassword(password,salt);

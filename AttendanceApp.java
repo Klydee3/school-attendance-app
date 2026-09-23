@@ -36,9 +36,9 @@ public class AttendanceApp {
     }
     static void printMenu() {
         System.out.println("=== Школьная система ===");
-        System.out.println("1. Показать всех студентов");
-        System.out.println("2. Зарегистрировать студента");
-        System.out.println("3. Подтвердить/отклонить студента");
+        System.out.println("1. Показать всех Учеников");
+        System.out.println("2. Зарегистрировать Ученика");
+        System.out.println("3. Подтвердить/отклонить Ученика");
         System.out.println("4. Сохранить в файл");
         System.out.println("5. Показать всех в Json");
         System.out.println("0. Выход");
@@ -69,23 +69,23 @@ public class AttendanceApp {
                 pendingCount++;
             }
         }
-        System.out.println("Всего студентов: " + students.size());
+        System.out.println("Всего учеников: " + students.size());
         System.out.println(approvedCount + " подтверждено");
         System.out.println(rejectedCount + " отклонено");
         System.out.println(pendingCount + " в ожидании");
     }
     static void registerStudent(Scanner scann) {
-        System.out.print("Введите имя и фамилию студента:");
+        System.out.print("Введите имя и фамилию ученика:");
         String newFullName=scann.nextLine();
         String[] fio=newFullName.split(" ",2);
         String surName=fio[0];
         String name=fio.length>1?fio[1]:"";
-        Student s=new Student(surName,name,RegistrationStatus.PENDING);
+        Student s=new Student(surName,name);
         students.put(s.fullName(),s);
-        System.out.println("Студент "+s.fullName()+" успешно зарегистрирован!(статус:ожидание)");
+        System.out.println("Ученик "+s.fullName()+" успешно зарегистрирован!(статус:ожидание)");
     }
     static void reviewStudent(Scanner scann) {
-        System.out.print("Введите имя и фамилию студента:");
+        System.out.print("Введите имя и фамилию ученика:");
         String fullName=scann.nextLine();
         if(students.containsKey(fullName)) {
             Student target=students.get(fullName);
@@ -94,15 +94,15 @@ public class AttendanceApp {
             String answer=scann.nextLine();
             if(answer.equalsIgnoreCase("Подтвердить")) {
                 target.setStatus(RegistrationStatus.APPROVED);
-                System.out.println("Студент "+fullName+" подтвержден!");
+                System.out.println("Ученик "+fullName+" подтвержден!");
             } else if(answer.equalsIgnoreCase("Отклонить")) {
                 target.setStatus(RegistrationStatus.REJECTED);
-                System.out.println("Студент "+fullName+" отклонен!");
+                System.out.println("Ученик "+fullName+" отклонен!");
             } else {
                 System.out.println("Вы ввели некорректный ответ");
             } 
         } else {
-            System.out.println("Студент не найден");
+            System.out.println("Ученик не найден");
         }
     }
     static void saveToFile() {

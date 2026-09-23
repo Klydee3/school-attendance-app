@@ -14,13 +14,13 @@ public class FileStorage {
         try {
             OutputStreamWriter writer=new OutputStreamWriter(
 				new FileOutputStream(fileName),StandardCharsets.UTF_8);
-            for (Student s : students) {
-                writer.write(s.fullName() + ":" + s.getStatus() + "\n");
+            for (Student s:students) {
+                writer.write(s.fullName()+":"+s.getClassName()+":"+s.getStatus()+"\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);
         } catch (IOException e) {
-            System.out.println("Ошибка записи: " + e.getMessage());
+            System.out.println("Ошибка записи: "+e.getMessage());
         }
     }
     public static ArrayList<Student> loadStudents(String fileName) {
@@ -33,9 +33,10 @@ public class FileStorage {
                 String[] parts=line.split(":");
                 String[] fio=parts[0].trim().split(" ",2);
                 String surname=fio[0];
+				String className=parts[1];
                 String name=fio.length>1?fio[1]:"";
-                RegistrationStatus status=RegistrationStatus.valueOf(parts[1].trim());
-                students.add(new Student(name,surname,status));
+                RegistrationStatus status=RegistrationStatus.valueOf(parts[2].trim());
+                students.add(new Student(name,surname,className,status));
             }
             reader.close();
         } catch (IOException e) {

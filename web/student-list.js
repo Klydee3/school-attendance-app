@@ -18,7 +18,7 @@ function loadAll() {
             const row=document.createElement("div");
             row.className="pending-row";
             const label=document.createElement("span");
-            label.textContent=s.surname+" "+s.name+"---"+s.status;
+	label.textContent=s.surname+" "+s.name+"("+s["class"]+") --- "+s.status;
             const delBtn=document.createElement("button");
             delBtn.className="btn btn-no";
             delBtn.textContent="Удалить";

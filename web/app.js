@@ -1,4 +1,15 @@
-const message=document.getElementById("message");
+const messageBox=document.getElementById("message");
+const message={
+    _timer:null,
+    get textContent() {return messageBox.textContent;},
+    set textContent(text) {
+        messageBox.textContent=text;
+        clearTimeout(this._timer);
+        if (text!=="") {
+            this._timer=setTimeout(function() {messageBox.textContent="";},2500);
+        }
+    }
+};
 const loginScreen=document.getElementById("login-screen");
 const studentScreen=document.getElementById("student-screen");
 const teacherScreen=document.getElementById("teacher-screen");
@@ -7,6 +18,7 @@ const logoutBtn=document.getElementById("logout-btn");
 const sessionButtons=document.getElementById("session-buttons");
 const changePassButton=document.getElementById("change-pass-button");
 function showScreen() {
+	message.textContent="";
     const role=localStorage.getItem("role");
     loginScreen.style.display="none";
     studentScreen.style.display="none";
@@ -131,8 +143,9 @@ function review(student,decision) {
 document.getElementById("reg-btn").addEventListener("click",function() {
     const surname=document.getElementById("reg-surname").value.trim();
     const name=document.getElementById("reg-name").value.trim();
-    if (surname===""||name==="") {
-        message.textContent="Введите фамилию и имя";
+	const className=document.getElementById("reg-className").value.trim();
+    if (surname===""||name===""||className==="") {
+        message.textContent="Введите фамилию, имя и класс";
         return;
     }
     const token=localStorage.getItem("token");
@@ -142,7 +155,7 @@ document.getElementById("reg-btn").addEventListener("click",function() {
             "Content-Type":"application/x-www-form-urlencoded",
             "Authorization":"Bearer "+token
         },
-        body:"name="+encodeURIComponent(name)+"&surname="+encodeURIComponent(surname)
+        body:"name="+encodeURIComponent(name)+"&surname="+encodeURIComponent(surname)+"&className="+encodeURIComponent(className)
     })
         .then(function(r) {return r.json();})
         .then(function(data) {
@@ -150,6 +163,7 @@ document.getElementById("reg-btn").addEventListener("click",function() {
                 message.textContent="Ученик добавлен.";
                 document.getElementById("reg-surname").value="";
                 document.getElementById("reg-name").value="";
+				document.getElementById("reg-className").value="";
             } else {
                 message.textContent="Ошибка: "+data.message;
             }
