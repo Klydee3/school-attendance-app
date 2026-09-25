@@ -83,4 +83,15 @@ public class FileStorage {
             System.out.println("Ошибка записи: " + e.getMessage());
         }
     }
+	static synchronized void addAttendanceMark(String fullName,String answer) {
+		String line=java.time.LocalDate.now()+";"+fullName+";"+answer+"\n";
+		try{
+			java.io.Writer w=new OutputStreamWriter(
+				new FileOutputStream("attendance.txt",true),StandardCharsets.UTF_8);
+			w.write(line);
+			w.close();
+		}catch(IOException e) {
+			System.out.println("Ошибка записи журнала"+e.getMessage());
+		}
+	}
 }

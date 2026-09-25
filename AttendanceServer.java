@@ -9,6 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 public class AttendanceServer {
     static Map<String,String> parseQuery(HttpExchange exchange) {
         Map<String,String> params=new HashMap<>();
@@ -147,29 +150,30 @@ public class AttendanceServer {
     }
     static class AttendHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
-            Account account = accountByToken(exchange);
-            if (account == null) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"не авторизован\"}");
+            Account account=accountByToken(exchange);
+            if (account==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            if (account.getRole() != Role.STUDENT) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"нет доступа\"}");
+            if (account.getRole()!=Role.STUDENT) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
                 return;
             }
-            String key = account.getLogin();
-            Student target = AttendanceApp.students.get(key);
-            if (target == null) {
-                sendJson(exchange, "{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
+            String key=account.getLogin();
+            Student target=AttendanceApp.students.get(key);
+            if (target==null) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
                 return;
             }
-            Map<String, String> params = parseQuery(exchange);
-            String answer = params.get("answer");
+            Map<String,String> params=parseQuery(exchange);
+            String answer=params.get("answer");
+			FileStorage.addAttendanceMark(account.getLogin(),answer);
             if ("no".equals(answer)) {
                 target.setStatus(RegistrationStatus.REJECTED);
             } else {
                 target.setStatus(RegistrationStatus.PENDING);
             }
-            sendJson(exchange, "{\"result\":\"ok\",\"name\":\"" + key + "\"}");
+            sendJson(exchange,"{\"result\":\"ok\",\"name\":\"" + key + "\"}");
         }
     }
     static class LoginHandler implements HttpHandler {
@@ -257,6 +261,70 @@ public class AttendanceServer {
             sendJson(exchange,"{\"result\":\"ok\",\"message\":\"ученик удален\"}");
         }
     }
+	static class SummaryHandler implements HttpHandler {
+		public void handle(HttpExchange exchange) throws IOException {
+			Account account=accountByToken(exchange);
+			if (account==null) {
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
+				return;
+			}
+			if (account.getRole()==Role.STUDENT) {
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
+				return;
+			}
+			Map<String,String> params=parseQuery(exchange);
+			String date=params.get("date");
+			if(date==null||date.isEmpty()) {
+				date=java.time.LocalDate.now().toString();
+			}
+			java.util.Set<String> present=new java.util.HashSet<>();
+			java.io.File f=new java.io.File("attendance.txt");
+			if(f.exists()) {
+				BufferedReader reader=new BufferedReader(
+					new InputStreamReader(new FileInputStream(f),StandardCharsets.UTF_8));
+				String line;
+				while((line=reader.readLine())!=null) {
+					String[] p=line.split(";");
+					if (p.length==3&&p[0].equals(date)&&p[2].equals("yes")) {
+						present.add(p[1]);
+					}
+				}
+				reader.close();
+			}
+			java.util.Map<String,int[]> byClass=new java.util.TreeMap<>();
+			for (Student s:AttendanceApp.students.values()) {
+				int[] c=byClass.get(s.getClassName());
+				if (c==null) {
+					c=new int[2];
+					byClass.put(s.getClassName(),c);
+				}
+				c[0]++;
+				if(present.contains(s.fullName())) {
+					c[1]++;
+				}
+			}
+			StringBuilder sb=new StringBuilder();
+			sb.append("{\"result\":\"ok\",\"date\":\"").append(date).append("\",\"rows\":[");
+			boolean first=true;
+			int totalAll=0,presentAll=0;
+			for (Map.Entry<String,int[]> e:byClass.entrySet()) {
+				if(!first) sb.append(",");
+				first=false;
+				int total=e.getValue()[0],pr=e.getValue()[1];
+				totalAll+=total;
+				presentAll+=pr;
+				int percent=total==0?0:pr*100/total;
+				sb.append("{\"class\":\"").append(e.getKey())
+				  .append("\",\"total\":").append(total)
+				  .append(",\"present\":").append(pr)
+				  .append(",\"absent\":").append(total-pr)
+				  .append(",\"percent\":").append(percent).append("}");
+			}
+			sb.append("],\"totalAll\":").append(totalAll)
+			  .append(",\"presentAll\":").append(presentAll).append("}");
+			sendJson(exchange,sb.toString());
+		}
+	}
     static Map<String,String> parseBody(HttpExchange exchange) throws IOException {
         String body=new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Map<String,String> result=new HashMap<>();
@@ -289,6 +357,7 @@ public class AttendanceServer {
         server.createContext("/api/login", new LoginHandler());
         server.createContext("/api/change-password", new ChangePasswordHandler());
         server.createContext("/api/delete-student",new DeleteStudentHandler());
+		server.createContext("/api/summary",new SummaryHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }
