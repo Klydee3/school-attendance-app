@@ -185,4 +185,7 @@ changePassButton.addEventListener("click",function() {
 document.getElementById("students-btn").addEventListener("click",function() {
     location.href="student-list.html";
 });
+document.getElementById("summary-btn").addEventListener("click",function() {
+	location.href="summary.html";
+});
 showScreen();
