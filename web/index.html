@@ -7,11 +7,12 @@
     </head>
     <body>
         <div class="container">
-        <h1>Школьная система</h1>
         <div id="login-screen">
+			<h1>Вход в аккаунт</h1>
             <input class="name-input" id="login-input" type="text" placeholder="Логин">
             <input class="name-input" id="password-input" type="password" placeholder="Пароль">
             <button class="btn btn-yes" id="login-btn">Войти</button>
+			<button class="btn" id="to-reg-screen">Регистрация(Если вы не ученик!)</button>
         </div>
         <div id="student-screen" style="display:none">
             <p>Будете сегодня в школе?</p>
@@ -19,16 +20,18 @@
             <button class="btn btn-no" id="btn-no">Нет</button>
         </div>
         <div id="teacher-screen" style="display:none">
-            <h2>Кабинет сотрудника</h2>
+            <h2>Кабинет учителя</h2>
             <div id="pending-list"></div>
         </div>
         <div id="admin-screen" style="display:none">
-            <h2>Кабинет администратора</h2>
+            <h2>Кабинет администрации</h2>
             <input class="name-input" id="reg-surname" type="text" placeholder="Фамилия">
             <input class="name-input" id="reg-name" type="text" placeholder="Имя">
 			<input class="name-input" id="reg-className" type="text" placeholder="Класс">
             <button class="btn btn-yes" id="reg-btn">Зарегистрировать ученика</button>
             <button class="btn save-btn" id="save-btn">Сохранить в файл</button>
+			<h3>Заявки на аккаунты</h3>
+			<div id="pending-accounts"></div>
             <button class="btn" id="students-btn">Список учеников</button>
 			<button class="btn" id="summary-btn">Утренняя сводка</button>
         </div>

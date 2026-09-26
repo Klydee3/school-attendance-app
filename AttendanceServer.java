@@ -194,6 +194,10 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"неверный логин или пароль\"}");
                 return;
             }
+			if(!account.isApproved()) {
+				sendJson(exchange, "{\"result\":\"error\",\"message\":\"Аккаунт ещё не подтверждён администрацией\"}");
+				return;
+			}
             String token=java.util.UUID.randomUUID().toString();
             AttendanceApp.sessions.put(token,account);
             sendJson(exchange,"{\"result\":\"ok\",\"token\":\""+token+"\",\"role\":\""+account.getRole()+"\"}");
@@ -325,6 +329,85 @@ public class AttendanceServer {
 			sendJson(exchange,sb.toString());
 		}
 	}
+	static class TeacherNAdminRegisterHandler implements HttpHandler {
+        public void handle(HttpExchange exchange) throws IOException {
+            Map<String,String>params=parseBody(exchange);
+            String name=params.get("name");
+            String surname=params.get("surname");
+			String password=params.get("password");
+			String roleStr=params.get("role");
+			Role role;
+			if("TEACHER".equals(roleStr)){
+				role=Role.TEACHER;
+			}else if("ADMIN".equals(roleStr)){
+				role=Role.ADMIN;
+			}else{
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"неккоректная роль!\"}");
+				return;
+			}
+            if (name==null||surname==null||name.isEmpty()||surname.isEmpty()) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нужны имя и фамилия!\"}");
+                return;
+            }
+			if (password==null||password.isEmpty()) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нужен пароль!\"}");
+                return;
+            }
+            String key=surname+" "+name;
+            if (AttendanceApp.accounts.containsKey(key)) {
+                sendJson(exchange,"{\"result\":\"error\",\"message\":\"уже есть в списках\"}");
+                return;
+            }
+            String salt=AttendanceApp.newSalt();
+			String hash=AttendanceApp.hashPassword(password,salt);
+			AttendanceApp.accounts.put(key,new Account(key,role,salt,hash));
+			FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
+            sendJson(exchange,"{\"result\":\"ok\",\"message\":\"Заявка создана, ждёт подтверждения администрацией\"}");
+        }
+    }
+	static class PendingAccountsHandler implements HttpHandler {
+		public void handle(HttpExchange exchange) throws IOException {
+			Account account=accountByToken(exchange);
+			if (account==null||account.getRole()!=Role.ADMIN) {
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
+				return;
+			}
+			StringBuilder sb=new StringBuilder("{\"result\":\"ok\",\"rows\":[");
+			boolean first=true;
+			for (Account a:AttendanceApp.accounts.values()) {
+				if (!a.isApproved()) {
+					if (!first) sb.append(",");
+					first=false;
+					sb.append("{\"login\":\"").append(a.getLogin()).append("\",\"role\":\"").append(a.getRole()).append("\"}");
+				}
+			}
+			sb.append("]}");
+			sendJson(exchange, sb.toString());
+		}
+	}
+	static class ApproveAccountHandler implements HttpHandler {
+		public void handle(HttpExchange exchange) throws IOException {
+			Account account=accountByToken(exchange);
+			if (account==null) {
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
+				return;
+			}
+			if (account.getRole()!=Role.ADMIN) {
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
+				return;
+			}
+			Map<String,String> params=parseBody(exchange);
+			String login=params.get("login");
+			Account target=AttendanceApp.accounts.get(login);
+			if (target==null) {
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"аккаунт не найден\"}");
+				return;
+			}
+			target.setApproved(true);
+			FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
+			sendJson(exchange,"{\"result\":\"ok\",\"message\":\"аккаунт подтверждён\"}");
+		}
+	}
     static Map<String,String> parseBody(HttpExchange exchange) throws IOException {
         String body=new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Map<String,String> result=new HashMap<>();
@@ -358,6 +441,9 @@ public class AttendanceServer {
         server.createContext("/api/change-password", new ChangePasswordHandler());
         server.createContext("/api/delete-student",new DeleteStudentHandler());
 		server.createContext("/api/summary",new SummaryHandler());
+		server.createContext("/api/teacher-n-admin-register",new TeacherNAdminRegisterHandler());
+		server.createContext("/api/pending-accounts", new PendingAccountsHandler());
+		server.createContext("/api/approve-account", new ApproveAccountHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }

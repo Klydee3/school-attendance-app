@@ -17,6 +17,7 @@ const adminScreen=document.getElementById("admin-screen");
 const logoutBtn=document.getElementById("logout-btn");
 const sessionButtons=document.getElementById("session-buttons");
 const changePassButton=document.getElementById("change-pass-button");
+const regScreen=document.getElementById("reg-screen");
 function showScreen() {
 	message.textContent="";
     const role=localStorage.getItem("role");
@@ -38,6 +39,9 @@ function showScreen() {
     if(role!==null) {
         sessionButtons.style.display="flex";
     }
+	if(role==="ADMIN"&&document.getElementById("pending-accounts")){
+		loadPendingAccounts();
+	}
 }
 document.getElementById("login-btn").addEventListener("click", function() {
     const login=document.getElementById("login-input").value.trim();
@@ -73,15 +77,15 @@ function attend(answer) {
             if (data.result==="ok") {
                 message.textContent=answer==="yes"
                     ?"Спасибо! Ждите подтверждения учителя."
-                    :"Принято. Порция не нужна.";
+                    :"Принято";
             } else {
                 message.textContent="Ошибка: "+data.message;
             }
         })
         .catch(function() { message.textContent="Сервер недоступен"; });
 }
-document.getElementById("btn-yes").addEventListener("click", function() { attend("yes"); });
-document.getElementById("btn-no").addEventListener("click", function() { attend("no"); });
+document.getElementById("btn-yes").addEventListener("click", function() {attend("yes");});
+document.getElementById("btn-no").addEventListener("click", function() {attend("no");});
 logoutBtn.addEventListener("click", function() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -179,6 +183,36 @@ document.getElementById("save-btn").addEventListener("click",function() {
         })
         .catch(function() {message.textContent="Сервер недоступен";});
 });
+function loadPendingAccounts() {
+    fetch("/api/pending-accounts", {headers:{"Authorization":"Bearer "+localStorage.getItem("token")}})
+        .then(function(r) {return r.json();})
+        .then(function(data) {
+            const box=document.getElementById("pending-accounts");
+            box.textContent="";
+            if (data.result!=="ok") {return;}
+            if (data.rows.length===0) {box.textContent="Новых заявок нет";return;}
+            data.rows.forEach(function(row) {
+                const div=document.createElement("div");
+                div.textContent=row.login+" ("+row.role+") ";
+                const btn=document.createElement("button");
+                btn.className="btn";
+                btn.textContent="Подтвердить";
+                btn.addEventListener("click",function() {approveAccount(row.login);});
+                div.appendChild(btn);
+                box.appendChild(div);
+            });
+        });
+}
+function approveAccount(login) {
+    fetch("/api/approve-account",{
+        method:"POST",
+        headers:{"Content-Type": "application/x-www-form-urlencoded",
+            "Authorization":"Bearer "+localStorage.getItem("token")},
+        body:"login="+encodeURIComponent(login)
+    })
+    .then(function(r) {return r.json();})
+    .then(function() {loadPendingAccounts();});
+}
 changePassButton.addEventListener("click",function() {
     location.href="change.html";
 });
@@ -187,5 +221,8 @@ document.getElementById("students-btn").addEventListener("click",function() {
 });
 document.getElementById("summary-btn").addEventListener("click",function() {
 	location.href="summary.html";
+});
+document.getElementById("to-reg-screen").addEventListener("click",function() {
+	location.href="/reg-page.html";
 });
 showScreen();

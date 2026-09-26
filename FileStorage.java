@@ -40,7 +40,7 @@ public class FileStorage {
             }
             reader.close();
         } catch (IOException e) {
-            System.out.println("Ошибка чтения: " + e.getMessage());
+            System.out.println("Ошибка чтения: "+e.getMessage());
         }
         return students;
     }
@@ -54,15 +54,17 @@ public class FileStorage {
             BufferedReader reader=new BufferedReader(
 				new InputStreamReader(new FileInputStream(fileName),StandardCharsets.UTF_8));
             String line;
-            while ((line=reader.readLine()) != null) {
+            while ((line=reader.readLine())!=null) {
                 if(line.trim().isEmpty()) {
                     continue;
                 }
-                String[] parts=line.split(":",4);
+                String[] parts=line.split(":",5);
 				if (parts.length<4) {
 					continue;
 				}
-				result.add(new Account(parts[0],Role.valueOf(parts[1]),parts[2],parts[3]));
+				Account acc=new Account(parts[0],Role.valueOf(parts[1]),parts[2],parts[3]);
+				acc.setApproved(parts.length>4?"APPROVED".equals(parts[4].trim()):true);
+				result.add(acc);
             }
             reader.close();
         } catch (IOException e) {
@@ -75,7 +77,7 @@ public class FileStorage {
             OutputStreamWriter writer=new OutputStreamWriter(
 				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Account a:accounts) {
-                writer.write(a.getLogin()+":"+a.getRole()+":"+a.getSalt()+":"+a.getPasswordHash()+"\n");
+                writer.write(a.getLogin()+":"+a.getRole()+":"+a.getSalt()+":"+a.getPasswordHash()+":"+(a.isApproved()?"APPROVED":"PENDING")+"\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);

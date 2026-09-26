@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta cahrset="UTF-8">
+	<title>Регистрация</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<div id="reg-screen">
+			<h1>Регистрация</h1>
+			<input class="name-input" id="register-surname" type="text" placeholder="Фамилия">
+			<input class="name-input" id="register-name" type="text" placeholder="Имя">
+			<input class="name-input" id="register-password-input" type="password" placeholder="Пароль">
+			<input class="name-input" id="register-password-input-repeat" type="password" placeholder="Повторите пароль">
+			<form>
+				<label for="role">Кто вы?</label>
+				<select id="role" name="role">
+					<option value="TEACHER">Учитель</option>
+					<option value="ADMIN">Администрация</option>
+				</select>
+			</form>
+			<button class="btn" id="register-btn">Создать аккаунт</button>
+			<button class="btn" id="back-btn">Назад</button>
+		</div>
+	</div>
+	<p id="message"></p>
+	<script src="reg-page.js"></script>
+</body>
+</html>

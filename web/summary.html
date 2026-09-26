@@ -6,21 +6,23 @@
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h1>Утренняя сводка</h1>
-	<div>
-		<input type="date" id="summary-date">
-		<button class="btn "id="show-btn">Показать</button>
-		<button class="btn" id="csv-btn">Скачать CSV</button>
+	<div class="container">
+		<h1>Утренняя сводка</h1>
+		<div>
+			<input class="btn date-choise" type="date" id="summary-date">
+			<button class="btn "id="show-btn">Показать</button>
+			<button class="btn" id="csv-btn">Скачать CSV</button>
+		</div>
+		<table id="summary-table">
+			<thead>
+				<tr><th>Класс</th><th>Всего</th><th>Пришло</th><th>Не пришло</th><th>Процент</th></tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<p id="summary-total"></p>
+		<p id="message"></p>
+		<button class="btn" id="back-btn">Назад</button>
+		<script src="summary.js"></script>
 	</div>
-	<table id="summary-table">
-		<thead>
-			<tr><th>Класс</th><th>Всего</th><th>Пришло</th><th>Не пришло</th><th>Процент</th></tr>
-		</thead>
-		<tbody></tbody>
-	</table>
-	<p id="summary-total"></p>
-	<p id="message"></p>
-	<button class="btn" id="back-btn">Назад</button>
-	<script src="summary.js"></script>
 </body>
 </html>

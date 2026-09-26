@@ -21,12 +21,18 @@ public class AttendanceApp {
         if(loaded.isEmpty()) {
             for(Student a:students.values()) {
                 String studentSalt=newSalt();
-				accounts.put(a.fullName(),new Account(a.fullName(),Role.STUDENT,studentSalt,hashPassword("12345678",studentSalt)));
+				Account studentAcc=new Account(a.fullName(),Role.STUDENT,studentSalt,hashPassword("12345678",studentSalt));
+				studentAcc.setApproved(true);
+				accounts.put(a.fullName(),studentAcc);
             }
             String teacherSalt=newSalt();
-			accounts.put("teacher",new Account("teacher",Role.TEACHER,teacherSalt,hashPassword("12345678",teacherSalt)));
+			Account teacherAcc=new Account("teacher",Role.TEACHER,teacherSalt,hashPassword("12345678",teacherSalt));
+			teacherAcc.setApproved(true);
+			accounts.put("teacher",teacherAcc);
             String adminSalt=newSalt();
-			accounts.put("admin",new Account("admin",Role.ADMIN,adminSalt,hashPassword("12345678",adminSalt)));
+			Account adminAcc=new Account("admin",Role.ADMIN,adminSalt,hashPassword("12345678",adminSalt));
+			adminAcc.setApproved(true);
+			accounts.put("admin",adminAcc);
             FileStorage.saveAccounts(new ArrayList<>(accounts.values()),"accounts.txt");
         } else {
             for(Account a:loaded) {
