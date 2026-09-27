@@ -81,6 +81,10 @@ public class AttendanceServer {
     }
     static class ReviewHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+			if(!exchange.getRequestMethod().equals("POST")){
+				sendJson(exchange,405,"{\"result\":\"error\",\"message\":\"Этот запрос изменяет данные, нужен POST\"}");
+				return;
+			}
             Account account=accountByToken(exchange);
             if (account==null) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
@@ -108,6 +112,10 @@ public class AttendanceServer {
     }
     static class SaveHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+			if(!exchange.getRequestMethod().equals("POST")){
+				sendJson(exchange,405,"{\"result\":\"error\",\"message\":\"Этот запрос изменяет данные, нужен POST\"}");
+				return;
+			}
             Account account=accountByToken(exchange);
             if (account==null) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
@@ -150,6 +158,10 @@ public class AttendanceServer {
     }
     static class AttendHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+			if(!exchange.getRequestMethod().equals("POST")){
+				sendJson(exchange,405,"{\"result\":\"error\",\"message\":\"Этот запрос изменяет данные, нужен POST\"}");
+				return;
+			}
             Account account=accountByToken(exchange);
             if (account==null) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
@@ -242,6 +254,10 @@ public class AttendanceServer {
     }
     static class DeleteStudentHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
+			if(!exchange.getRequestMethod().equals("POST")){
+				sendJson(exchange,405,"{\"result\":\"error\",\"message\":\"Этот запрос изменяет данные, нужен POST\"}");
+				return;
+			}
             Account account=accountByToken(exchange);
             if(account==null) {
                 sendJson(exchange,"{\"result\":error\",\"message\":\"не авторизован\"}");

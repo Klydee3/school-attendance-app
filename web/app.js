@@ -71,7 +71,8 @@ document.getElementById("login-btn").addEventListener("click", function() {
 function attend(answer) {
     const token=localStorage.getItem("token");
     fetch("/api/attend?answer="+encodeURIComponent(answer),
-        {headers:{"Authorization":"Bearer "+token}})
+        {method:"POST",
+		headers:{"Authorization":"Bearer "+token}})
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (data.result==="ok") {
@@ -133,7 +134,8 @@ function review(student,decision) {
     const token=localStorage.getItem("token");
     fetch("/api/review?name="+encodeURIComponent(student.name)+"&surname="+encodeURIComponent(student.surname)
     +"&decision="+encodeURIComponent(decision),
-    {headers:{"Authorization":"Bearer "+token}})
+    {method:"POST",
+	headers:{"Authorization":"Bearer "+token}})
     .then(function(r) {return r.json();})
     .then(function(data) {
         if(data.result==="ok") {
@@ -176,7 +178,9 @@ document.getElementById("reg-btn").addEventListener("click",function() {
 });
 document.getElementById("save-btn").addEventListener("click",function() {
     const token=localStorage.getItem("token");
-    fetch("/api/save?",{headers:{"Authorization":"Bearer "+token}})
+    fetch("/api/save?",{
+		method:"POST",
+		headers:{"Authorization":"Bearer "+token}})
         .then(function(r) {return r.json();})
         .then(function(data) {
             message.textContent=data.result==="ok"?"Сохранено в файл.":"Ошибка: "+data.message;

@@ -32,7 +32,8 @@ function loadAll() {
 }
 function removeStudent(student) {
     fetch("/api/delete-student?name="+encodeURIComponent(student.name)+"&surname="+encodeURIComponent(student.surname),
-    {headers:{"Authorization":"Bearer "+token}})
+    {method:"POST",
+	headers:{"Authorization":"Bearer "+token}})
     .then(function(r){return r.json();})
     .then(function(data) {
         if(data.result==="ok") {
