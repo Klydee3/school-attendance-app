@@ -1,6 +1,9 @@
 const message=document.getElementById("message");
 const token=localStorage.getItem("token");
 const role=localStorage.getItem("role");
+if(!localStorage.getItem("token")) {
+	location.href="index.html"
+}
 if(token===null||role!=="ADMIN") {
     location.href="index.html";
 }

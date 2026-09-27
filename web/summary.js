@@ -12,6 +12,9 @@ const message={
 };
 const token=localStorage.getItem("token");
 const role=localStorage.getItem("role");
+if(!localStorage.getItem("token")) {
+	location.href="index.html"
+}
 if (!token||role==="STUDENT") {
     location.href="/index.html";
 }
@@ -37,11 +40,11 @@ function loadSummary() {
                 const tr=document.createElement("tr");
                 tr.innerHTML="<td>"+row["class"]+"</td><td>"+row.total+
                     "</td><td>"+row.present+"</td><td>"+row.absent+
-                    "</td><td>"+row.percent+"%</td>";
+                    "</td><td>"+row.silent+"</td><td>"+row.percent+"%</td>";
                 tbody.appendChild(tr);
             });
             document.getElementById("summary-total").textContent=
-                "По школе: пришло "+data.presentAll+" из "+data.totalAll;
+                "В школу пришло "+data.presentAll+" из "+data.totalAll;
         })
         .catch(function() {message.textContent="Сервер недоступен";});
 }
@@ -51,15 +54,17 @@ document.getElementById("csv-btn").addEventListener("click",function() {
         message.textContent="Сначала покажи сводку";
         return;
     }
-    let csv="Класс;Всего;Пришло;Не пришло;Процент\n";
+    let csv="Класс;Всего;Пришло;Не пришло;Не отметилось;Процент\n";
     lastData.rows.forEach(function(row) {
         csv+=row["class"]+";"+row.total+";"+row.present+";"+
-            row.absent+";"+row.percent+"\n";
+            row.absent+";"+row.silent+";"+row.percent+"\n";
     });
+	let absentAll=0,silentAll=0;
+	lastData.rows.forEach(function(r){absentAll+=r.absent;silentAll+=r.silent;})
     const percentAll=lastData.totalAll>0
         ?Math.round(lastData.presentAll*100/lastData.totalAll):0;
     csv+="По школе;"+lastData.totalAll+";"+lastData.presentAll+";"+
-        (lastData.totalAll-lastData.presentAll)+";"+percentAll+"\n";
+        absentAll+";"+silentAll+";"+percentAll+"\n";
     const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
     const a=document.createElement("a");
     a.href=URL.createObjectURL(blob);

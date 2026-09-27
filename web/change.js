@@ -1,5 +1,8 @@
 const message=document.getElementById("message");
 const token=localStorage.getItem("token");
+if(!localStorage.getItem("token")) {
+	location.href="index.html"
+}
 if(token===null) {
     location.href="index.html";
 }

@@ -1,6 +1,6 @@
 teacher:TEACHER:9Z6Q9GPLbsFGWxelEKVGbw==:x7OT3SG3nwQN4HJH/55VuGHfMlK4xAe4bHvxx08okCI=:APPROVED:
+Луковский Арсений:STUDENT:64fMO04MwWZ/8XK0UF0GoQ==:Sp50XWFCHdJSGKdTytlKpmAhu4S9eSRLnAzwiQCEbCw=:APPROVED:Школа №1
 Михалева Оксана:ADMIN:AQ1kXeVh5CzwnzRWrEHdLw==:Z2ft4ujyeB3HR4uotIi6F1tP68fnDUcWsajfJvaa2BY=:APPROVED:Школа №1
-admin:ADMIN:TOkc1b+cHKXHoGhKeJMsCA==:9Uq52mKutCJZMUCZCOryyL9Pm0k9ZZrFXE7hXDDp9SI=:APPROVED:Школа №1
-Маргелова Марина:TEACHER:tmQVTlP+S8pvdnbx7Xr/jA==:iKqwnWMrXXERCOEfIEG66WpZilFHnTokq8KCke3iBhU=:PENDING:Школа №1
+Смолькин Илья:STUDENT:bBE+IENPELiNbc4nFAmKiQ==:BVlJiDJX2HSbtBRGp+MxEq+mcUS8/1CM5WpsjYOBiRA=:APPROVED:Школа №1
+admin:ADMIN:rjN7TR7U3lqI28ZiwAulnQ==:/2ZXWdsoiquGXFgOAXgzORTW1cmeVWBRCNc09KX2g6o=:APPROVED:Школа №1
 Парфенова Екатерина:TEACHER:ojjNpKCbqV1RdiJ59RlYHA==:hyHXfvDz1voaFGJEZU1ljeWphviiJOXKImTG/cAsB78=:APPROVED:Школа №1
-Запрутина Татьяна:ADMIN:3jdnwdK+9p7WGksA92Aj2g==:fHU6PFzvRY2xO/5qTBE0oNnsykEyOZbmAxxlTY2vkqs=:PENDING:Школа №2

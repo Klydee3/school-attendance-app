@@ -71,7 +71,7 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"уже есть в списках\"}");
                 return;
             }
-            AttendanceApp.students.put(key,new Student(name,surname,className));
+            AttendanceApp.students.put(key,new Student(name,surname,className,RegistrationStatus.APPROVED));
 			String password="12345678";
             String salt=AttendanceApp.newSalt();
 			String hash=AttendanceApp.hashPassword(password,salt);
@@ -80,37 +80,6 @@ public class AttendanceServer {
 			studentAcc.setApproved(true);
 			AttendanceApp.accounts.put(key,studentAcc);
             sendJson(exchange,"{\"result\":\"ok\",\"name\":\""+key+"\"}");
-        }
-    }
-    static class ReviewHandler implements HttpHandler {
-        public void handle(HttpExchange exchange) throws IOException {
-			if(!exchange.getRequestMethod().equals("POST")){
-				sendJson(exchange,405,"{\"result\":\"error\",\"message\":\"Этот запрос изменяет данные, нужен POST\"}");
-				return;
-			}
-            Account account=accountByToken(exchange);
-            if (account==null) {
-                sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
-                return;
-            }
-            if (account.getRole()!=Role.TEACHER) {
-                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
-                return;
-            }
-            Map<String, String> params=parseQuery(exchange);
-            String name=params.get("name");
-            String surname=params.get("surname");
-            String decision=params.get("decision");
-            String key=surname+" "+name;
-            Student target=AttendanceApp.students.get(key);
-            if (target==null) {
-                sendJson(exchange,"{\"result\":\"error\",\"message\":\"студент не найден\"}");
-            } else if (!"APPROVED".equalsIgnoreCase(decision)&&!"REJECTED".equalsIgnoreCase(decision)) {
-                sendJson(exchange,"{\"result\":\"error\",\"message\":\"bad decision\"}");
-            } else {
-                target.setStatus(RegistrationStatus.valueOf(decision.toUpperCase()));
-                sendJson(exchange,"{\"result\":\"ok\",\"name\":\""+key+"\",\"status\":\""+target.getStatus()+"\"}");
-            }
         }
     }
     static class SaveHandler implements HttpHandler {
@@ -170,10 +139,6 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            if (account.getRole()!=Role.STUDENT) {
-                sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
-                return;
-            }
             String key=account.getLogin();
             Student target=AttendanceApp.students.get(key);
             if (target==null) {
@@ -183,11 +148,6 @@ public class AttendanceServer {
             Map<String,String> params=parseQuery(exchange);
             String answer=params.get("answer");
 			FileStorage.addAttendanceMark(account.getLogin(),answer);
-            if ("no".equals(answer)) {
-                target.setStatus(RegistrationStatus.REJECTED);
-            } else {
-                target.setStatus(RegistrationStatus.PENDING);
-            }
             sendJson(exchange,"{\"result\":\"ok\",\"name\":\"" + key + "\"}");
         }
     }
@@ -284,63 +244,70 @@ public class AttendanceServer {
             sendJson(exchange,"{\"result\":\"ok\",\"message\":\"ученик удален\"}");
         }
     }
-	static class SummaryHandler implements HttpHandler {
-		public void handle(HttpExchange exchange) throws IOException {
+	static class SummaryHandler implements HttpHandler{
+		public void handle(HttpExchange exchange) throws IOException{
 			Account account=accountByToken(exchange);
-			if (account==null) {
+			if(account==null){
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
 				return;
 			}
-			if (account.getRole()==Role.STUDENT) {
+			if(account.getRole()==Role.STUDENT){
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
 				return;
 			}
 			Map<String,String> params=parseQuery(exchange);
 			String date=params.get("date");
-			if(date==null||date.isEmpty()) {
+			if(date==null||date.isEmpty()){
 				date=java.time.LocalDate.now().toString();
 			}
-			java.util.Set<String> present=new java.util.HashSet<>();
+			java.util.Map<String,String> last=new java.util.HashMap<>();
 			java.io.File f=new java.io.File("attendance.txt");
-			if(f.exists()) {
+			if(f.exists()){
 				BufferedReader reader=new BufferedReader(
 					new InputStreamReader(new FileInputStream(f),StandardCharsets.UTF_8));
 				String line;
-				while((line=reader.readLine())!=null) {
+				while((line=reader.readLine())!=null){
 					String[] p=line.split(";");
-					if (p.length==3&&p[0].equals(date)&&p[2].equals("yes")) {
-						present.add(p[1]);
+					if(p.length==3&&p[0].equals(date)){
+						last.put(p[1],p[2]);
 					}
 				}
 				reader.close();
 			}
 			java.util.Map<String,int[]> byClass=new java.util.TreeMap<>();
-			for (Student s:AttendanceApp.students.values()) {
+			for(Student s:AttendanceApp.students.values()){
 				int[] c=byClass.get(s.getClassName());
-				if (c==null) {
-					c=new int[2];
+				if(c==null){
+					c=new int[3];
 					byClass.put(s.getClassName(),c);
 				}
 				c[0]++;
-				if(present.contains(s.fullName())) {
+				String ans=last.get(s.fullName());
+				if("yes".equals(ans)){
 					c[1]++;
+				}else if("no".equals(ans)){
+					c[2]++;
 				}
 			}
 			StringBuilder sb=new StringBuilder();
 			sb.append("{\"result\":\"ok\",\"date\":\"").append(date).append("\",\"rows\":[");
 			boolean first=true;
 			int totalAll=0,presentAll=0;
-			for (Map.Entry<String,int[]> e:byClass.entrySet()) {
-				if(!first) sb.append(",");
+			for(Map.Entry<String,int[]> e:byClass.entrySet()){
+				if(!first){
+					sb.append(",");
+				}
 				first=false;
-				int total=e.getValue()[0],pr=e.getValue()[1];
+				int total=e.getValue()[0],pr=e.getValue()[1],ab=e.getValue()[2];
+				int silent=total-pr-ab;
 				totalAll+=total;
 				presentAll+=pr;
 				int percent=total==0?0:pr*100/total;
 				sb.append("{\"class\":\"").append(e.getKey())
 				  .append("\",\"total\":").append(total)
 				  .append(",\"present\":").append(pr)
-				  .append(",\"absent\":").append(total-pr)
+				  .append(",\"absent\":").append(ab)
+				  .append(",\"silent\":").append(silent)
 				  .append(",\"percent\":").append(percent).append("}");
 			}
 			sb.append("],\"totalAll\":").append(totalAll)
@@ -465,7 +432,6 @@ public class AttendanceServer {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/api/students", new StudentsHandler());
         server.createContext("/api/register", new RegisterHandler());
-        server.createContext("/api/review", new ReviewHandler());
         server.createContext("/api/save", new SaveHandler());
         server.createContext("/", new PageHandler());
         server.createContext("/api/attend", new AttendHandler());
