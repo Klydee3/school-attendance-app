@@ -397,7 +397,7 @@ public class AttendanceServer {
 			StringBuilder sb=new StringBuilder("{\"result\":\"ok\",\"rows\":[");
 			boolean first=true;
 			for (Account a:AttendanceApp.accounts.values()) {
-				if (!a.isApproved()) {
+				if (!a.isApproved()&&account.getSchool().equals(a.getSchool())) {
 					if (!first) sb.append(",");
 					first=false;
 					sb.append("{\"login\":\"")
