@@ -197,7 +197,7 @@ function loadPendingAccounts() {
             if (data.rows.length===0) {box.textContent="Новых заявок нет";return;}
             data.rows.forEach(function(row) {
                 const div=document.createElement("div");
-                div.textContent=row.login+" ("+row.role+") ";
+                div.textContent=row.login+" ("+row.role+","+row.school+") ";
                 const btn=document.createElement("button");
                 btn.className="btn";
                 btn.textContent="Подтвердить";
@@ -205,7 +205,8 @@ function loadPendingAccounts() {
                 div.appendChild(btn);
                 box.appendChild(div);
             });
-        });
+        })
+		.catch(function() {box.textContent="Сервер не доступен или ответ не JSON"});
 }
 function approveAccount(login) {
     fetch("/api/approve-account",{

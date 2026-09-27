@@ -32,6 +32,7 @@ public class AttendanceApp {
             String adminSalt=newSalt();
 			Account adminAcc=new Account("admin",Role.ADMIN,adminSalt,hashPassword("12345678",adminSalt));
 			adminAcc.setApproved(true);
+			adminAcc.setSchool("Школа №1");
 			accounts.put("admin",adminAcc);
             FileStorage.saveAccounts(new ArrayList<>(accounts.values()),"accounts.txt");
         } else {

@@ -19,8 +19,13 @@ document.getElementById("register-btn").addEventListener("click",function() {
 	const password=document.getElementById("register-password-input").value.trim(); 
 	const passwordRepeat=document.getElementById("register-password-input-repeat").value.trim();
 	const role=document.getElementById("role").value.trim();
+	const school=document.getElementById("register-school").value.trim();
+	if (school==="") {
+        message.textContent="Введите название школы!";
+        return;
+    }
 	if (surname===""||name==="") {
-        message.textContent="Введите фамилию и имя";
+        message.textContent="Введите фамилию и имя!";
         return;
     }
 	if (password!==passwordRepeat) {
@@ -33,7 +38,8 @@ document.getElementById("register-btn").addEventListener("click",function() {
         body:"surname="+encodeURIComponent(surname)+
 			"&name="+encodeURIComponent(name)+
 			"&password="+encodeURIComponent(password)+
-			"&role="+encodeURIComponent(role)
+			"&role="+encodeURIComponent(role)+
+			"&school="+encodeURIComponent(school)
     })
         .then(function(r) {return r.json();})
         .then(function(data) {

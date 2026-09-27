@@ -58,12 +58,13 @@ public class FileStorage {
                 if(line.trim().isEmpty()) {
                     continue;
                 }
-                String[] parts=line.split(":",5);
+                String[] parts=line.split(":",6);
 				if (parts.length<4) {
 					continue;
 				}
 				Account acc=new Account(parts[0],Role.valueOf(parts[1]),parts[2],parts[3]);
 				acc.setApproved(parts.length>4?"APPROVED".equals(parts[4].trim()):true);
+				acc.setSchool(parts.length>5?parts[4+1]:"");
 				result.add(acc);
             }
             reader.close();
@@ -77,7 +78,7 @@ public class FileStorage {
             OutputStreamWriter writer=new OutputStreamWriter(
 				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Account a:accounts) {
-                writer.write(a.getLogin()+":"+a.getRole()+":"+a.getSalt()+":"+a.getPasswordHash()+":"+(a.isApproved()?"APPROVED":"PENDING")+"\n");
+                writer.write(a.getLogin()+":"+a.getRole()+":"+a.getSalt()+":"+a.getPasswordHash()+":"+(a.isApproved()?"APPROVED":"PENDING")+":"+(a.getSchool()==null?"":a.getSchool())+"\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);

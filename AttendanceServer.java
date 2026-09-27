@@ -75,7 +75,10 @@ public class AttendanceServer {
 			String password="12345678";
             String salt=AttendanceApp.newSalt();
 			String hash=AttendanceApp.hashPassword(password,salt);
-			AttendanceApp.accounts.put(key,new Account(key,Role.STUDENT,salt,hash));
+			Account studentAcc=new Account(key,Role.STUDENT,salt,hash);
+			studentAcc.setSchool(account.getSchool());
+			studentAcc.setApproved(true);
+			AttendanceApp.accounts.put(key,studentAcc);
             sendJson(exchange,"{\"result\":\"ok\",\"name\":\""+key+"\"}");
         }
     }
@@ -353,6 +356,7 @@ public class AttendanceServer {
 			String password=params.get("password");
 			String roleStr=params.get("role");
 			Role role;
+			String school=params.get("school");
 			if("TEACHER".equals(roleStr)){
 				role=Role.TEACHER;
 			}else if("ADMIN".equals(roleStr)){
@@ -376,7 +380,9 @@ public class AttendanceServer {
             }
             String salt=AttendanceApp.newSalt();
 			String hash=AttendanceApp.hashPassword(password,salt);
-			AttendanceApp.accounts.put(key,new Account(key,role,salt,hash));
+			Account newAcc=new Account(key,role,salt,hash);
+			newAcc.setSchool(school==null?"":school);
+			AttendanceApp.accounts.put(key,newAcc);
 			FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
             sendJson(exchange,"{\"result\":\"ok\",\"message\":\"Заявка создана, ждёт подтверждения администрацией\"}");
         }
@@ -394,7 +400,13 @@ public class AttendanceServer {
 				if (!a.isApproved()) {
 					if (!first) sb.append(",");
 					first=false;
-					sb.append("{\"login\":\"").append(a.getLogin()).append("\",\"role\":\"").append(a.getRole()).append("\"}");
+					sb.append("{\"login\":\"")
+					.append(a.getLogin())
+					.append("\",\"role\":\"")
+					.append(a.getRole())
+					.append("\",\"school\":\"")
+					.append(a.getSchool())
+					.append("\"}");
 				}
 			}
 			sb.append("]}");
@@ -417,6 +429,10 @@ public class AttendanceServer {
 			Account target=AttendanceApp.accounts.get(login);
 			if (target==null) {
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"аккаунт не найден\"}");
+				return;
+			}
+			if(!target.getSchool().equals(account.getSchool())){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Заявка в другую школу\"}");
 				return;
 			}
 			target.setApproved(true);
