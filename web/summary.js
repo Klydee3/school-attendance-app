@@ -74,4 +74,7 @@ document.getElementById("csv-btn").addEventListener("click",function() {
 document.getElementById("back-btn").addEventListener("click",function() {
     location.href="/index.html";
 });
+document.getElementById("reasons-btn").addEventListener("click",function() {
+    location.href="/reasons.html?date="+dateInput.value;
+});
 loadSummary();

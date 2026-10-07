@@ -13,10 +13,11 @@ const message={
         }
     }
 };
-function attend(answer){
-    fetch("/api/attend?answer="+encodeURIComponent(answer),{
+function attend(answer,reason){
+    fetch("/api/attend",{
         method:"POST",
-        headers:{"Authorization":"Bearer "+localStorage.getItem("token")}
+        headers:{"Content-Type":"application/x-www-form-urlencoded","Authorization":"Bearer "+localStorage.getItem("token")},
+		body:"answer="+encodeURIComponent(answer)+"&reason="+encodeURIComponent(reason)
     })
     .then(function(r){return r.json();})
     .then(function(data){
@@ -24,5 +25,12 @@ function attend(answer){
     })
     .catch(function(){message.textContent="Сервер недоступен";});
 }
-document.getElementById("btn-yes").addEventListener("click",function(){attend("yes");});
-document.getElementById("btn-no").addEventListener("click",function(){attend("no");});
+document.getElementById("btn-yes").addEventListener("click",function(){attend("yes","");});
+document.getElementById("btn-no").addEventListener("click",function(){
+	const reason=document.getElementById("reason-input").value.trim();
+	if(reason==="") {
+		message.textContent="Нужно обязательно ввести причину отсутствия!";
+		return;
+	}
+	attend("no",reason);
+});

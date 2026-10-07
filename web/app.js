@@ -13,6 +13,7 @@ const message={
 function homeFor(role) {
     if(role==="STUDENT") {return "/student.html";}
     if(role==="TEACHER") {return "/teacher.html";}
+	if(role==="CAFETERIA") {return "/summary.html";}
     return "/admin.html";
 }
 const token=localStorage.getItem("token");

@@ -4,3 +4,4 @@ teacher:TEACHER:9Z6Q9GPLbsFGWxelEKVGbw==:x7OT3SG3nwQN4HJH/55VuGHfMlK4xAe4bHvxx08
 Смолькин Илья:STUDENT:bBE+IENPELiNbc4nFAmKiQ==:BVlJiDJX2HSbtBRGp+MxEq+mcUS8/1CM5WpsjYOBiRA=:APPROVED:Школа №1
 admin:ADMIN:rjN7TR7U3lqI28ZiwAulnQ==:/2ZXWdsoiquGXFgOAXgzORTW1cmeVWBRCNc09KX2g6o=:APPROVED:Школа №1
 Парфенова Екатерина:TEACHER:ojjNpKCbqV1RdiJ59RlYHA==:hyHXfvDz1voaFGJEZU1ljeWphviiJOXKImTG/cAsB78=:APPROVED:Школа №1
+Незнайков Незнайка:CAFETERIA:Cgmsfk4dPCvIEA5fobMAKw==:8btFwNQf8Yh61t9dveItTXIit34rGkqkGxNdvhZeqm0=:APPROVED:Школа №1

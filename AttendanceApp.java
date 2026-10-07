@@ -34,6 +34,11 @@ public class AttendanceApp {
 			adminAcc.setApproved(true);
 			adminAcc.setSchool("Школа №1");
 			accounts.put("admin",adminAcc);
+			String cafeSalt=newSalt();
+			Account cafeAcc=new Account("admin",Role.CAFETERIA,cafeSalt,hashPassword("12345678",cafeSalt));
+			cafeAcc.setApproved(true);
+			cafeAcc.setSchool("Школа №1");
+			accounts.put("cafe",cafeAcc);
             FileStorage.saveAccounts(new ArrayList<>(accounts.values()),"accounts.txt");
         } else {
             for(Account a:loaded) {

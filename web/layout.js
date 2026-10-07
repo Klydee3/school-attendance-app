@@ -42,7 +42,7 @@ function two(n) {return n<10?"0"+n:""+n;}
 			links += '<a href="/register-student.html">Регистрация ученика</a>';
 			links += '<a href="/applications.html">Заявки на аккаунты</a>';
 		}
-        if (role==="ADMIN"||role==="TEACHER") {
+        if (role==="ADMIN"||role==="TEACHER"||role==="CAFETERIA") {
             links+='<a href="/summary.html">Утренняя сводка</a>';
         }
         links+='<a href="/change.html">Сменить пароль</a>';

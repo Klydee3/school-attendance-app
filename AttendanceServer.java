@@ -145,10 +145,23 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
                 return;
             }
-            Map<String,String> params=parseQuery(exchange);
+            Map<String,String> params=parseBody(exchange);
             String answer=params.get("answer");
-			FileStorage.addAttendanceMark(account.getLogin(),answer);
-            sendJson(exchange,"{\"result\":\"ok\",\"name\":\"" + key + "\"}");
+			String reason=params.get("reason");
+			if (reason==null) {
+				reason="";
+			}
+			reason=reason.replace(";"," ").replace("\""," ").replace("\n"," ").trim();
+			if(!"yes".equals(answer)&&!"no".equals(answer)){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Некорректный ответ\"}");
+				return;
+			}
+			if("no".equals(answer)&&reason.isEmpty()){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Нужно обязательно ввести причину отстутствия!\"}");
+				return;
+			}
+			FileStorage.addAttendanceMark(key,answer,reason);
+            sendJson(exchange,"{\"result\":\"ok\",\"name\":\""+key+"\"}");
         }
     }
     static class LoginHandler implements HttpHandler {
@@ -261,6 +274,7 @@ public class AttendanceServer {
 				date=java.time.LocalDate.now().toString();
 			}
 			java.util.Map<String,String> last=new java.util.HashMap<>();
+			java.util.Map<String,String> lastReason=new java.util.HashMap<>();
 			java.io.File f=new java.io.File("attendance.txt");
 			if(f.exists()){
 				BufferedReader reader=new BufferedReader(
@@ -268,13 +282,18 @@ public class AttendanceServer {
 				String line;
 				while((line=reader.readLine())!=null){
 					String[] p=line.split(";");
-					if(p.length==3&&p[0].equals(date)){
+					if(p.length>=3&&p[0].equals(date)){
 						last.put(p[1],p[2]);
+						if(p.length>=4){
+							lastReason.put(p[1],p[3]);
+						}
 					}
 				}
 				reader.close();
 			}
 			java.util.Map<String,int[]> byClass=new java.util.TreeMap<>();
+			StringBuilder sbAbs=new StringBuilder();
+			boolean firstAbs=true;
 			for(Student s:AttendanceApp.students.values()){
 				int[] c=byClass.get(s.getClassName());
 				if(c==null){
@@ -287,8 +306,17 @@ public class AttendanceServer {
 					c[1]++;
 				}else if("no".equals(ans)){
 					c[2]++;
+					if(!firstAbs){
+						sbAbs.append(",");
+					}
+					firstAbs=false;
+					String r=lastReason.get(s.fullName());
+					sbAbs.append("{\"name\":\"").append(s.fullName())
+					  .append("\",\"class\":\"").append(s.getClassName())
+					  .append("\",\"reason\":\"").append(r==null?"":r)
+					  .append("\"}");
+					}
 				}
-			}
 			StringBuilder sb=new StringBuilder();
 			sb.append("{\"result\":\"ok\",\"date\":\"").append(date).append("\",\"rows\":[");
 			boolean first=true;
@@ -311,7 +339,8 @@ public class AttendanceServer {
 				  .append(",\"percent\":").append(percent).append("}");
 			}
 			sb.append("],\"totalAll\":").append(totalAll)
-			  .append(",\"presentAll\":").append(presentAll).append("}");
+			  .append(",\"presentAll\":").append(presentAll)
+			  .append(",\"absents\":[").append(sbAbs).append("]}");
 			sendJson(exchange,sb.toString());
 		}
 	}
@@ -328,6 +357,8 @@ public class AttendanceServer {
 				role=Role.TEACHER;
 			}else if("ADMIN".equals(roleStr)){
 				role=Role.ADMIN;
+			}else if("CAFETERIA".equals(roleStr)){
+				role=Role.CAFETERIA;
 			}else{
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"неккоректная роль!\"}");
 				return;
