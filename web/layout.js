@@ -24,11 +24,13 @@ function two(n) {return n<10?"0"+n:""+n;}
     ', <span id="greet-time">'+two(hour)+":"+two(now.getMinutes())+"</span></span>"+
     '<span class="greet-text">'+greet+"</span>";
     const rail=document.createElement("div");
-    rail.id="side-rail";
-    rail.innerHTML=
-        '<button class="side-icon" id="rail-tools" title="Инструменты">☰</button>'+
-        '<button class="side-icon" id="rail-person" title="Кабинет">☺</button>'+
-        '<button class="side-icon" id="rail-gear" title="Настройки">⚙</button>';
+	rail.id="side-rail";
+	rail.innerHTML=
+		(token
+			?'<button class="side-icon" id="rail-tools" title="Инструменты">☰</button>' +
+			 '<button class="side-icon" id="rail-person" title="Кабинет">☺</button>'
+			:'') +
+		'<button class="side-icon" id="rail-gear" title="Настройки">⚙</button>';
     const panel=document.createElement("div");
     panel.id="side-panel";
     let links="";
@@ -55,17 +57,23 @@ function two(n) {return n<10?"0"+n:""+n;}
     function closePanel() {
         panel.classList.remove("open");
     }
-    document.getElementById("rail-tools").addEventListener("click",function() {
-        panel.classList.toggle("open");
-    });
-    document.getElementById("rail-person").addEventListener("click",function() {
-        closePanel();
-        location.href="/index.html";
-    });
-    document.getElementById("rail-gear").addEventListener("click",function() {
-        closePanel();
-        location.href=token?"/change.html":"/index.html";
-    });
+   const toolsBtn=document.getElementById("rail-tools");
+	if(toolsBtn){
+		toolsBtn.addEventListener("click",function(){
+			panel.classList.toggle("open");
+		});
+	}
+	const personBtn=document.getElementById("rail-person");
+	if(personBtn){
+		personBtn.addEventListener("click",function(){
+			closePanel();
+			location.href="/index.html";
+		});
+	}
+	document.getElementById("rail-gear").addEventListener("click",function(){
+		closePanel();
+		location.href=token?"/change.html":"/index.html";
+	});
     document.addEventListener("click",function(e) {
         if (!panel.classList.contains("open")) {
             return;
