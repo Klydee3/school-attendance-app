@@ -145,6 +145,26 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"Ты не найден в списках школы\"}");
                 return;
             }
+			String today=java.time.LocalDate.now().toString();
+			boolean alreadyMarked=false;
+			java.io.File f=new java.io.File("attendance.txt");
+			if(f.exists()){
+				BufferedReader reader=new BufferedReader(
+					new InputStreamReader(new FileInputStream(f),StandardCharsets.UTF_8));
+				String line;
+				while((line=reader.readLine())!=null){
+					String[] p=line.split(";");
+					if(p.length>=3&&p[0].equals(today)&&p[1].equals(key)){
+						alreadyMarked=true;
+						break;
+					}
+				}
+				reader.close();
+			}
+			if(alreadyMarked){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Вы уже отметились сегодня. Отметку изменить нельзя.\"}");
+				return;
+			}
             Map<String,String> params=parseBody(exchange);
             String answer=params.get("answer");
 			String reason=params.get("reason");

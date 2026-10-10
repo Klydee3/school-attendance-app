@@ -17,11 +17,16 @@ function attend(answer,reason){
     fetch("/api/attend",{
         method:"POST",
         headers:{"Content-Type":"application/x-www-form-urlencoded","Authorization":"Bearer "+localStorage.getItem("token")},
-		body:"answer="+encodeURIComponent(answer)+"&reason="+encodeURIComponent(reason)
+        body:"answer="+encodeURIComponent(answer)+"&reason="+encodeURIComponent(reason)
     })
     .then(function(r){return r.json();})
     .then(function(data){
-        message.textContent=data.result==="ok"?"Отметка сохранена.":"Ошибка: "+data.message;
+        if(data.result==="ok"){
+            message.textContent="Отметка сохранена.";
+            setTimeout(function(){location.href="/student.html";},2000);
+        }else{
+            message.textContent=data.message;
+        }
     })
     .catch(function(){message.textContent="Сервер недоступен";});
 }
