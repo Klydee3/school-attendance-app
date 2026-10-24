@@ -14,15 +14,24 @@
 			<input class="name-input" id="register-name" type="text" placeholder="Имя">
 			<input class="name-input" id="register-password-input" type="password" placeholder="Пароль">
 			<input class="name-input" id="register-password-input-repeat" type="password" placeholder="Повторите пароль">
-			<input class="name-input" id="register-school" type="text" placeholder="Школа">
-			<form>
-				<label for="role">Кто вы?</label>
-				<select id="role" name="role-choise">
-					<option value="TEACHER">Учитель</option>
-					<option value="ADMIN">Администрация</option>
-					<option value="CAFETERIA">Столовая</option>
-				</select>
-			</form>
+			<div class="select-row">
+				<div class="select-group">
+					<label for="school">Выберите школу:</label>
+					<input list="schools" id="register-school" name="school" placeholder="Полное наименование УО">
+					<datalist id="schools">
+						<option value='ГУО "Новосамотевичская средняя школа Костюковичского района"'>
+						<option value='Средняя школа 1 города Костюковичи'>
+					</datalist>
+				</div>
+				<div class="select-group">
+					<label for="role">Кто вы?</label>
+					<select id="role" name="role-choise">
+						<option value="TEACHER">Учитель</option>
+						<option value="ADMIN">Администрация</option>
+						<option value="CAFETERIA">Столовая</option>
+					</select>
+				</div>
+			</div>
 			<button class="btn" id="register-btn">Создать аккаунт</button>
 			<button class="btn" id="back-btn">Назад</button>
 			<p id="message"></p>

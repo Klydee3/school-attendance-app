@@ -373,6 +373,7 @@ public class AttendanceServer {
 			String roleStr=params.get("role");
 			Role role;
 			String school=params.get("school");
+			ArrayList<String> schoolList=FileStorage.loadSchoolNames("schoolsList.txt");
 			if("TEACHER".equals(roleStr)){
 				role=Role.TEACHER;
 			}else if("ADMIN".equals(roleStr)){
@@ -382,6 +383,9 @@ public class AttendanceServer {
 			}else{
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"неккоректная роль!\"}");
 				return;
+			}
+			if(!schoolList.contains(school)){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"данной школы нет в списках!\"}");
 			}
             if (name==null||surname==null||name.isEmpty()||surname.isEmpty()) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"нужны имя и фамилия!\"}");

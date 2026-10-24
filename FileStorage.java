@@ -26,7 +26,7 @@ public class FileStorage {
     public static ArrayList<Student> loadStudents(String fileName) {
         ArrayList<Student> students=new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(
+            BufferedReader reader=new BufferedReader(
 				new InputStreamReader(new FileInputStream(fileName),StandardCharsets.UTF_8));
             String line;
             while ((line=reader.readLine())!=null) {
@@ -98,4 +98,23 @@ public class FileStorage {
 			System.out.println("Ошибка записи журнала"+e.getMessage());
 		}
 	}
+	public static ArrayList<String> loadSchoolNames(String fileName) {
+        ArrayList<String> schools=new ArrayList<>();
+        try {
+            BufferedReader reader=new BufferedReader(
+				new InputStreamReader(new FileInputStream(fileName),StandardCharsets.UTF_8));
+            String line;
+            while ((line=reader.readLine())!=null) {
+                String[] schoolsList=line.split("/");
+                String schoolName=schoolsList[0].trim();
+                if(!schoolName.isEmpty()) {
+					schools.add(schoolName);
+				}
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Ошибка чтения: "+e.getMessage());
+        }
+        return schools;
+    }
 }

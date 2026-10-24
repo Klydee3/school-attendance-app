@@ -43,7 +43,7 @@ document.getElementById("login-btn").addEventListener("click",function() {
             localStorage.setItem("role",data.role);
             location.href=homeFor(data.role);
         }else{
-            message.textContent="Ошибка: "+data.message;
+            message.textContent="Ошибка: "+data.message+". Или, возможно такого аккаунта не существует...";
         }
     })
     .catch(function() {message.textContent="Сервер недоступен";});
