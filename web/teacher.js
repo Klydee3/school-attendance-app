@@ -1,6 +1,14 @@
 if(!localStorage.getItem("token")||localStorage.getItem("role")!=="TEACHER"){
     location.href="/index.html";
 }
+fetch("/api/my-class",{headers:{"Authorization":"Bearer "+localStorage.getItem("token")}})
+.then(function(r){return r.json();})
+.then(function(data){
+    document.getElementById("teacher-class").textContent=data.class===""
+        ?"За вами не закреплён класс: сводка по всей школе."
+        :"Вы классный руководитель "+data.class+" класса: сводка и причины по вашему классу.";
+})
+.catch(function(){});
 fetch("/api/summary",{headers:{"Authorization":"Bearer "+localStorage.getItem("token")}})
 .then(function(r){return r.json();})
 .then(function(data){

@@ -1,6 +1,7 @@
-жалоы Илья:TEACHER:xz0mR2swZOJ5eIG6xvk+cA==:ayHjgG+YWMSBmhg20y0m4efYjrw7RvLLlCiE3QuoHHo=:PENDING:лололо
-teacher:TEACHER:9Z6Q9GPLbsFGWxelEKVGbw==:x7OT3SG3nwQN4HJH/55VuGHfMlK4xAe4bHvxx08okCI=:APPROVED:
-Луковский Арсений:STUDENT:64fMO04MwWZ/8XK0UF0GoQ==:Sp50XWFCHdJSGKdTytlKpmAhu4S9eSRLnAzwiQCEbCw=:APPROVED:Школа №1
-Смолькин Илья:STUDENT:bBE+IENPELiNbc4nFAmKiQ==:BVlJiDJX2HSbtBRGp+MxEq+mcUS8/1CM5WpsjYOBiRA=:APPROVED:Школа №1
-admin:ADMIN:rjN7TR7U3lqI28ZiwAulnQ==:/2ZXWdsoiquGXFgOAXgzORTW1cmeVWBRCNc09KX2g6o=:APPROVED:Школа №1
-Незнайков Незнайка:CAFETERIA:Cgmsfk4dPCvIEA5fobMAKw==:8btFwNQf8Yh61t9dveItTXIit34rGkqkGxNdvhZeqm0=:APPROVED:Школа №1
+teacher:TEACHER:+f8W9HJXIKNBHBz1APWHGg==:7aKxeQG6V9Y084juzljgbGLQpqXm7teBSTx/PZoohNU=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+cafe:CAFETERIA:HhX7zY9D24wYRajNXOrXbQ==:dyofnsK+7O7mNm2REZojIOxYo07k1FkHqlSH8FmuYzk=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+Луковский Арсений:STUDENT:vxBKxUIe3VZ/x5yrchvRQQ==:agRGJta04sDaoCr7k8XVO5S//iIsbIgUSDXAeiBh3FY=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+Смолькин Илья:STUDENT:EvdoundkaX1UOBmgTGc5Ew==:BGFhsgRj2h7EKvaKRD0nuWMNB3bnUpaeIOBOBeioPGs=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+admin:ADMIN:l3ZB/TiknhMYW6LWc/FvnQ==:RNM9kg1V8EmXSLD17XNcvZvmPaFl0enPdYiJakGYHe4=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+Парфенова Екатерина:TEACHER:2mErfQd9bgsbN/3txA+Gnw==:6sKWLBDi5x9i2laNPG/LGuRpAHSZUB68J2WVqKW+dmk=:PENDING:ГУО «Новосамотевичская средняя школа Костюковичского района»
+Шуниборова Татьяна:ADMIN:4+rOejZKvaDk7TdG/K5/2g==:wpy9lQy2bAgB+JrLi2Drztt9AbdZqOvA5WTQ7D7Ntwk=:APPROVED:Средняя школа 1 города Костюковичи

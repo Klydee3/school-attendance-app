@@ -41,9 +41,10 @@ document.getElementById("login-btn").addEventListener("click",function() {
         if(data.result==="ok") {
             localStorage.setItem("token",data.token);
             localStorage.setItem("role",data.role);
+			localStorage.setItem("school",data.school);
             location.href=homeFor(data.role);
         }else{
-            message.textContent="Ошибка: "+data.message+". Или, возможно такого аккаунта не существует...";
+            message.textContent="Ошибка: "+data.message;
         }
     })
     .catch(function() {message.textContent="Сервер недоступен";});

@@ -9,7 +9,7 @@ const message={
         messageBox.textContent=text;
         clearTimeout(this._timer);
         if(text!==""){
-            this._timer=setTimeout(function(){messageBox.textContent="";},5000);
+            this._timer=setTimeout(function(){messageBox.textContent="";},2000);
         }
     }
 };
@@ -38,7 +38,8 @@ function loadPendingAccounts(){
             box.appendChild(div);
         });
     })
-    .catch(function(){message.textContent="Сервер недоступен";});
+    .catch(function(e){
+		message.textContent="Сервер недоступен";});
 }
 function approveAccount(login){
     fetch("/api/approve-account",{
@@ -47,11 +48,17 @@ function approveAccount(login){
         body:"login="+encodeURIComponent(login)
     })
     .then(function(r){return r.json();})
-    .then(function(data){
-        message.textContent=data.result==="ok"?"Аккаунт подтверждён.":"Ошибка: "+data.message;
-        loadPendingAccounts();
+    .then(function(data) {
+        if(data.result==="ok") {
+            message.textContent="Аккаунт подтверждён.";
+            loadPendingAccounts();
+        } else {
+            message.textContent="Ошибка: "+data.message;
+        }
     })
-    .catch(function(){message.textContent="Сервер недоступен";});
+    .catch(function() {message.textContent="Сервер недоступен";});
 }
-document.getElementById("back-btn").addEventListener("click",function(){location.href="/admin.html";});
+document.getElementById("back-btn").addEventListener("click", function() {
+    location.href="/admin.html";
+});
 loadPendingAccounts();

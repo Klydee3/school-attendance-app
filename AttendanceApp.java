@@ -7,6 +7,8 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 public class AttendanceApp {
     static HashMap<String,Student> students=new HashMap<>();
     static HashMap<String,Account> accounts=new HashMap<>();
@@ -77,7 +79,53 @@ public class AttendanceApp {
 			throw new RuntimeException(e);
 		}
 	}
+	public static java.util.Map<String,String> classTeacher=new java.util.HashMap<>();
+	static void loadClassTeachers(){
+		classTeacher.clear();
+		java.io.File f=new java.io.File("classteachers.txt");
+		if(!f.exists()){
+			return;
+		}
+		try(BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f),StandardCharsets.UTF_8))){
+			String line;
+			while((line=r.readLine())!=null){
+				String[] p=line.split(";");
+				if(p.length==2&&!p[0].isEmpty()){
+					classTeacher.put(p[0],p[1]);
+				}
+			}
+		}catch(IOException e){
+			System.out.println("Ошибка чтения classteachers.txt: "+e.getMessage());
+		}
+	}
+	static synchronized void saveClassTeachers(){
+		try(java.io.Writer w=new OutputStreamWriter(new FileOutputStream("classteachers.txt"),StandardCharsets.UTF_8)){
+			for(java.util.Map.Entry<String,String> e:classTeacher.entrySet()){
+				w.write(e.getKey()+";"+e.getValue()+"\n");
+			}
+		}catch(IOException e){
+			System.out.println("Ошибка записи classteachers.txt: "+e.getMessage());
+		}
+	}
+	static synchronized void saveAccounts() {
+		try(java.io.Writer w=new java.io.OutputStreamWriter(
+				new java.io.FileOutputStream("accounts.txt"),
+				java.nio.charset.StandardCharsets.UTF_8)) {
+			for(java.util.Map.Entry<String,Account> e:accounts.entrySet()) {
+				Account a=e.getValue();
+				w.write(e.getKey()+":"+
+						a.getRole()+":"+
+						a.getSalt()+":"+
+						a.getPasswordHash()+":"+
+						(a.isApproved()?"APPROVED":"PENDING")+
+						(a.getSchool()==null?"":a.getSchool())+"\n");
+			}
+		} catch(java.io.IOException e) {
+			System.out.println("Ошибка записи accounts.txt: "+e.getMessage());
+		}
+	}
     public static void main(String[] args) {
         loadRegistry();
+		loadClassTeachers();
     }
 }

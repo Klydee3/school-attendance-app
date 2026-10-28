@@ -43,6 +43,7 @@ function two(n) {return n<10?"0"+n:""+n;}
 			links += '<a href="/student-list.html">Список учеников</a>';
 			links += '<a href="/register-student.html">Регистрация ученика</a>';
 			links += '<a href="/applications.html">Заявки на аккаунты</a>';
+			links += '<a href="/assign.html">Классные руководители</a>';
 		}
         if (role==="ADMIN"||role==="TEACHER"||role==="CAFETERIA") {
             links+='<a href="/summary.html">Утренняя сводка</a>';

@@ -15,7 +15,7 @@ public class FileStorage {
             OutputStreamWriter writer=new OutputStreamWriter(
 				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Student s:students) {
-                writer.write(s.fullName()+":"+s.getClassName()+":"+s.getStatus()+"\n");
+                writer.write(s.getSurname()+":"+s.getName()+":"+s.getClassName()+":"+s.getStatus()+(s.getSchool()==null?"":s.getSchool())+"\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);
@@ -31,12 +31,15 @@ public class FileStorage {
             String line;
             while ((line=reader.readLine())!=null) {
                 String[] parts=line.split(":");
-                String[] fio=parts[0].trim().split(" ",2);
-                String surname=fio[0];
-				String className=parts[1];
-                String name=fio.length>1?fio[1]:"";
-                RegistrationStatus status=RegistrationStatus.valueOf(parts[2].trim());
-                students.add(new Student(name,surname,className,status));
+				if(parts.length<4){
+					System.out.println("Пропуск строки в students.txt: "+line);
+					continue;
+				}
+                String surname=parts[0];
+				String name=parts[1];
+                String className=parts[2];
+				String school=parts[3];
+                students.add(new Student(name,surname,className,RegistrationStatus.APPROVED,school));
             }
             reader.close();
         } catch (IOException e) {
@@ -64,7 +67,7 @@ public class FileStorage {
 				}
 				Account acc=new Account(parts[0],Role.valueOf(parts[1]),parts[2],parts[3]);
 				acc.setApproved(parts.length>4?"APPROVED".equals(parts[4].trim()):true);
-				acc.setSchool(parts.length>5?parts[4+1]:"");
+				acc.setSchool(parts.length>4?parts[5].trim():"");
 				result.add(acc);
             }
             reader.close();
@@ -78,7 +81,12 @@ public class FileStorage {
             OutputStreamWriter writer=new OutputStreamWriter(
 				new FileOutputStream(fileName),StandardCharsets.UTF_8);
             for (Account a:accounts) {
-                writer.write(a.getLogin()+":"+a.getRole()+":"+a.getSalt()+":"+a.getPasswordHash()+":"+(a.isApproved()?"APPROVED":"PENDING")+":"+(a.getSchool()==null?"":a.getSchool())+"\n");
+                writer.write(a.getLogin()
+				+":"+a.getRole()
+				+":"+a.getSalt()
+				+":"+a.getPasswordHash()
+				+":"+(a.isApproved()?"APPROVED":"PENDING")
+				+":"+(a.getSchool()==null?"":a.getSchool())+"\n");
             }
             writer.close();
             System.out.println("Сохранено в файл "+fileName);

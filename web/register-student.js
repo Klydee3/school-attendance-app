@@ -9,7 +9,7 @@ const message={
         messageBox.textContent=text;
         clearTimeout(this._timer);
         if(text!==""){
-            this._timer=setTimeout(function(){messageBox.textContent="";},5000);
+            this._timer=setTimeout(function(){messageBox.textContent="";},2000);
         }
     }
 };
@@ -25,7 +25,10 @@ document.getElementById("reg-student-btn").addEventListener("click",function(){
     fetch("/api/register",{
         method:"POST",
         headers:{"Content-Type":"application/x-www-form-urlencoded","Authorization":"Bearer "+localStorage.getItem("token")},
-        body:"surname="+encodeURIComponent(surname)+"&name="+encodeURIComponent(name)+"&className="+encodeURIComponent(className)
+        body:"surname="+encodeURIComponent(surname)+
+		"&name="+encodeURIComponent(name)+
+		"&className="+encodeURIComponent(className)+
+		"&school="+encodeURIComponent(localStorage.getItem("school"))
     })
     .then(function(r){return r.json();})
     .then(function(data){
