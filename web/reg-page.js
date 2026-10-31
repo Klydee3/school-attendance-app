@@ -50,5 +50,5 @@ document.getElementById("register-btn").addEventListener("click",function() {
                 message.textContent="Ошибка: "+data.message;
             }
         })
-        .catch(function() {message.textContent="Сервер недоступен";});
+        .catch(function(){message.textContent="Сервер недоступен";});
 });

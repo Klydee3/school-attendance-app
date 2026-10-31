@@ -1,4 +1,4 @@
-if(!localStorage.getItem("token")||localStorage.getItem("role")!=="ADMIN"){
+if(!localStorage.getItem("token")||(localStorage.getItem("role")!=="ADMIN"&&localStorage.getItem("role")!=="MAIN_DEVELOPER")){
     location.href="/index.html";
 }
 function loadTeachers(){
@@ -37,7 +37,7 @@ function loadTeachers(){
                 })
                 .catch(function(){document.getElementById("message").textContent="Сервер недоступен";});
             });
-            row.appendChild(document.createTextNode(t.login+" — "));
+            row.appendChild(document.createTextNode(t.login));
             row.appendChild(input);
             row.appendChild(btn);
             box.appendChild(row);

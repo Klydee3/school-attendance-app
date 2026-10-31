@@ -1,7 +1,13 @@
+stepdev1:MAIN_DEVELOPER:w6CXDB/JzMV5mo6EqODaww==:ljzqgo9BIOlQtRQHmupyD0fKElfVAIDthyII1ZWRxt4=:APPROVED:
+Сальникова Любовь:ADMIN:A5wjBQ3BeZcD3q0EEAwPPg==:gEVT6tmYYbAagvcZZiatoO8kYmVkEQ5kr0qDWoBSHlY=:APPROVED:Средняя школа 1 города Костюковичи
+Сальников Владимир:TEACHER:08wnVdWswL98t5rE4wsfAQ==:jXyG+Q3jwEPMJBHFiAb+hJ2E0v6xhtcgapSwXnCXabI=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+admin:ADMIN:l3ZB/TiknhMYW6LWc/FvnQ==:RNM9kg1V8EmXSLD17XNcvZvmPaFl0enPdYiJakGYHe4=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+Шуниборова Татьяна:ADMIN:4+rOejZKvaDk7TdG/K5/2g==:wpy9lQy2bAgB+JrLi2Drztt9AbdZqOvA5WTQ7D7Ntwk=:APPROVED:Средняя школа 1 города Костюковичи
+stepdev:MAIN_DEVELOPER:c7JBhJw6btZTnnMweg/VmA==:m5VvYMqZcs04DHvXFLRpGwMCflH3f+V3S4zmpHvDQ/8=:APPROVED:
 teacher:TEACHER:+f8W9HJXIKNBHBz1APWHGg==:7aKxeQG6V9Y084juzljgbGLQpqXm7teBSTx/PZoohNU=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
 cafe:CAFETERIA:HhX7zY9D24wYRajNXOrXbQ==:dyofnsK+7O7mNm2REZojIOxYo07k1FkHqlSH8FmuYzk=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
-Луковский Арсений:STUDENT:vxBKxUIe3VZ/x5yrchvRQQ==:agRGJta04sDaoCr7k8XVO5S//iIsbIgUSDXAeiBh3FY=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
+Луковский Арсений:STUDENT:ff6RhKmu4GcqouUKKloNfA==:UNVEUEDBSsL5ZXRXZ75PHAgfUGL+8S9U+GOgphrnc0U=:APPROVED:
+maindev:MAIN_DEVELOPER:+wZJhg7SrrWwSONByUpkkA==:ll3/41BNokeHfophKTV978bvgR33j6YoP2bTzbUz/tk=:APPROVED:
+Михалева Оксана:ADMIN:hfMLcrrHrQrkgTEn0MWQnw==:W1/TdcgbP3KR1U+UIQHtArRqwkF161/WM1bubEtI/Bo=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
 Смолькин Илья:STUDENT:EvdoundkaX1UOBmgTGc5Ew==:BGFhsgRj2h7EKvaKRD0nuWMNB3bnUpaeIOBOBeioPGs=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
-admin:ADMIN:l3ZB/TiknhMYW6LWc/FvnQ==:RNM9kg1V8EmXSLD17XNcvZvmPaFl0enPdYiJakGYHe4=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»
-Парфенова Екатерина:TEACHER:2mErfQd9bgsbN/3txA+Gnw==:6sKWLBDi5x9i2laNPG/LGuRpAHSZUB68J2WVqKW+dmk=:PENDING:ГУО «Новосамотевичская средняя школа Костюковичского района»
-Шуниборова Татьяна:ADMIN:4+rOejZKvaDk7TdG/K5/2g==:wpy9lQy2bAgB+JrLi2Drztt9AbdZqOvA5WTQ7D7Ntwk=:APPROVED:Средняя школа 1 города Костюковичи
+Парфенова Екатерина:TEACHER:2mErfQd9bgsbN/3txA+Gnw==:6sKWLBDi5x9i2laNPG/LGuRpAHSZUB68J2WVqKW+dmk=:APPROVED:ГУО «Новосамотевичская средняя школа Костюковичского района»

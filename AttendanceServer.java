@@ -54,7 +54,7 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            if (account.getRole()!=Role.ADMIN) {
+            if (account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
                 return;
             }
@@ -103,7 +103,7 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            if (account.getRole()!=Role.ADMIN) {
+            if (account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
                 return;
             }
@@ -218,7 +218,7 @@ public class AttendanceServer {
 			}
             String token=java.util.UUID.randomUUID().toString();
             AttendanceApp.sessions.put(token,account);
-            sendJson(exchange,"{\"result\":\"ok\",\"token\":\""+token+"\",\"role\":\""+account.getRole()+"\",\"school\":\""+(account.getSchool()==null?"":account.getSchool())+"\"}");
+            sendJson(exchange,"{\"result\":\"ok\",\"token\":\""+token+"\",\"role\":\""+account.getRole()+"\",\"login\":\""+account.getLogin()+"\",\"school\":\""+(account.getSchool()==null?"":account.getSchool())+"\"}");
         }
     }
     static class ChangePasswordHandler implements HttpHandler {
@@ -269,7 +269,7 @@ public class AttendanceServer {
                 sendJson(exchange,"{\"result\":error\",\"message\":\"не авторизован\"}");
                 return;
             }
-            if(account.getRole()!=Role.ADMIN) {
+            if(account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER) {
                 sendJson(exchange,"{\"result\":\"error\",\"message\":\"недостаточно прав\"}");
                 return;
             }
@@ -429,24 +429,39 @@ public class AttendanceServer {
 	static class PendingAccountsHandler implements HttpHandler {
 		public void handle(HttpExchange exchange) throws IOException {
 			Account account=accountByToken(exchange);
-			if (account==null||account.getRole()!=Role.ADMIN) {
+			if (account==null||(account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER)) {
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
 				return;
 			}
 			StringBuilder sb=new StringBuilder("{\"result\":\"ok\",\"rows\":[");
 			boolean first=true;
 			for (Account a:AttendanceApp.accounts.values()) {
-				String adminSchool = account.getSchool();
-				if (!a.isApproved() && (adminSchool == null || adminSchool.equals(a.getSchool()))) {
-					if (!first) sb.append(",");
-					first=false;
-					sb.append("{\"login\":\"")
-					.append(a.getLogin())
-					.append("\",\"role\":\"")
-					.append(a.getRole())
-					.append("\",\"school\":\"")
-					.append(a.getSchool())
-					.append("\"}");
+				if (!a.isApproved()){
+					if(account.getRole()==Role.MAIN_DEVELOPER){
+						if (!first) sb.append(",");
+						first=false;
+						sb.append("{\"login\":\"")
+						.append(a.getLogin())
+						.append("\",\"role\":\"")
+						.append(a.getRole())
+						.append("\",\"school\":\"")
+						.append(a.getSchool())
+						.append("\"}");
+						first=false;
+					}else if(account.getRole()==Role.ADMIN){
+						String adminSchool=account.getSchool();
+						if(adminSchool!=null&&adminSchool.equals(a.getSchool())){
+							if (!first) sb.append(",");
+							first=false;
+							sb.append("{\"login\":\"")
+							.append(a.getLogin())
+							.append("\",\"role\":\"")
+							.append(a.getRole())
+							.append("\",\"school\":\"")
+							.append(a.getSchool())
+							.append("\"}");
+						}
+					}
 				}
 			}
 			sb.append("]}");
@@ -460,7 +475,7 @@ public class AttendanceServer {
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
 				return;
 			}
-			if (account.getRole()!=Role.ADMIN) {
+			if (account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER) {
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
 				return;
 			}
@@ -471,46 +486,41 @@ public class AttendanceServer {
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"аккаунт не найден\"}");
 				return;
 			}
-			if(!target.getSchool().equals(account.getSchool())){
-				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Заявка в другую школу\"}");
-				return;
+			if(account.getRole()!=Role.MAIN_DEVELOPER){
+				if(target.getSchool().equals(account.getSchool())){
+					sendJson(exchange,"{\"result\":\"error\",\"message\":\"Заявка в другую школу\"}");
+					return;
+				}
 			}
 			target.setApproved(true);
 			FileStorage.saveAccounts(new ArrayList<>(AttendanceApp.accounts.values()),"accounts.txt");
 			sendJson(exchange,"{\"result\":\"ok\",\"message\":\"аккаунт подтверждён\"}");
 		}
 	}
-	static class MyClassHandler implements HttpHandler{
-		public void handle(HttpExchange exchange) throws IOException{
+	static class TeachersListHandler implements HttpHandler {
+		public void handle(HttpExchange exchange) throws IOException {
 			Account account=accountByToken(exchange);
-			if(account==null){
-				sendJson(exchange,"{\"result\":\"error\",\"message\":\"не авторизован\"}");
-				return;
-			}
-			String cls=AttendanceApp.classTeacher.get(account.getLogin());
-			sendJson(exchange,"{\"result\":\"ok\",\"class\":\""+(cls==null?"":cls)+"\"}");
-		}
-	}
-	static class TeachersListHandler implements HttpHandler{
-		public void handle(HttpExchange exchange) throws IOException{
-			Account account=accountByToken(exchange);
-			if(account==null||account.getRole()!=Role.ADMIN){
+			if (account==null||(account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER)){
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
 				return;
 			}
 			StringBuilder sb=new StringBuilder("{\"result\":\"ok\",\"teachers\":[");
 			boolean first=true;
-			for(Account a:AttendanceApp.accounts.values()){
-				if(a.getRole()!=Role.TEACHER){
+			for (Account a:AttendanceApp.accounts.values()) {
+				if (a.getRole()!=Role.TEACHER||!a.isApproved()){
 					continue;
 				}
-				if(!first){
-					sb.append(",");
+				if (account.getRole()==Role.ADMIN) {
+					String adminSchool=account.getSchool();
+					if (adminSchool==null||!adminSchool.equals(a.getSchool())){
+						continue;
+					}
 				}
-				first=false;
 				String cls=AttendanceApp.classTeacher.get(a.getLogin());
-				sb.append("{\"login\":\"").append(a.getLogin())
-				  .append("\",\"class\":\"").append(cls==null?"":cls).append("\"}");
+				if (!first) sb.append(",");
+				sb.append("{\"login\":\"").append(a.getLogin()).append("\",");
+				sb.append("\"class\":\"").append(cls==null?"":cls).append("\"}");
+				first=false;
 			}
 			sb.append("]}");
 			sendJson(exchange,sb.toString());
@@ -523,7 +533,7 @@ public class AttendanceServer {
 				return;
 			}
 			Account account=accountByToken(exchange);
-			if(account==null||account.getRole()!=Role.ADMIN){
+			if(account==null||(account.getRole()!=Role.ADMIN&&account.getRole()!=Role.MAIN_DEVELOPER)){
 				sendJson(exchange,"{\"result\":\"error\",\"message\":\"нет доступа\"}");
 				return;
 			}
@@ -546,6 +556,33 @@ public class AttendanceServer {
 			}
 			AttendanceApp.saveClassTeachers();
 			sendJson(exchange,"{\"result\":\"ok\"}");
+		}
+	}
+	static class RegDevHandler implements HttpHandler{
+		public void handle(HttpExchange exchange) throws IOException{
+			Map<String,String>params=parseBody(exchange);
+			Account acc=accountByToken(exchange);
+			if(acc==null||acc.getRole()!=Role.MAIN_DEVELOPER){
+			sendJson(exchange,"{\"result\":\"error\",\"message\":\"Нет доступа\"}");
+			return;
+			}
+			String pass=params.get("pass");
+			String name=params.get("name");
+			if(pass==null||pass.isEmpty()||name==null||name.isEmpty()){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Ведите все поля!\"}");
+				return;
+			}
+			if(AttendanceApp.accounts.containsKey(name)){
+				sendJson(exchange,"{\"result\":\"error\",\"message\":\"Аккаунт с таким именем уже существует!\"}");
+				return;
+			}
+			String devSalt=AttendanceApp.newSalt();
+			String hashedPass=AttendanceApp.hashPassword(pass,devSalt);
+			Account devAcc=new Account(name,Role.MAIN_DEVELOPER,devSalt,hashedPass);
+			devAcc.setApproved(true);
+			AttendanceApp.accounts.put(name,devAcc);
+			AttendanceApp.saveAccounts();
+			sendJson(exchange,"{\"result\":\"ok\",\"message\":\"Аккаунт Главного Разработчика успешно создан!\"}");
 		}
 	}
     static Map<String,String> parseBody(HttpExchange exchange) throws IOException {
@@ -583,9 +620,9 @@ public class AttendanceServer {
 		server.createContext("/api/teacher-n-admin-register",new TeacherNAdminRegisterHandler());
 		server.createContext("/api/pending-accounts", new PendingAccountsHandler());
 		server.createContext("/api/approve-account", new ApproveAccountHandler());
-		server.createContext("/api/my-class",new MyClassHandler());
 		server.createContext("/api/teachers-list",new TeachersListHandler());
 		server.createContext("/api/assign-class",new AssignClassHandler());
+		server.createContext("/api/reg-dev",new RegDevHandler());
         server.start();
         System.out.println("Сервер запущен на порту 8080!");
     }

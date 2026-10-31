@@ -15,7 +15,7 @@ const role=localStorage.getItem("role");
 if(!localStorage.getItem("token")) {
 	location.href="index.html"
 }
-if (!token||role==="STUDENT") {
+if (!token||(role==="STUDENT"&&localStorage.getItem("role")!=="MAIN_DEVELOPER")) {
     location.href="/index.html";
 }
 function two(n) {return n<10?"0"+n:""+n;}
@@ -51,7 +51,7 @@ function loadSummary() {
 document.getElementById("show-btn").addEventListener("click",loadSummary);
 document.getElementById("csv-btn").addEventListener("click",function() {
     if (!lastData) {
-        message.textContent="Сначала покажи сводку";
+        message.textContent="Сначала покажите сводку";
         return;
     }
     let csv="Класс;Всего;Пришло;Не пришло;Не отметилось;Процент\n";

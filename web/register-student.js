@@ -1,4 +1,4 @@
-if(!localStorage.getItem("token")||localStorage.getItem("role")!=="ADMIN"){
+if(!localStorage.getItem("token")||(localStorage.getItem("role")!=="ADMIN"&&localStorage.getItem("role")!=="MAIN_DEVELOPER")){
     location.href="/index.html";
 }
 const messageBox=document.getElementById("message");

@@ -23,7 +23,7 @@ body {
     margin-top:10px;
     
 }
-.container {max-width:420px; margin:0 auto;}
+.container {display:grid; place-items:center; max-width:100%; margin:0, auto;}
 .name-input {
     display: block;
     width: 360px;
@@ -71,7 +71,7 @@ body {
     margin-top:10px;
 }
 #change-btn{
-    margin-top:10px;
+    margin-top:0px;
 }
 #session-buttons {
     gap:10px;
@@ -129,7 +129,20 @@ date-choise{
     padding:10px;border-radius:8px;
 }
 #side-panel a:hover {background:#3c5162;}
-.bubble {
-    border:1.5px solid #7a8ba0;border-radius:14px;padding:12px 16px;
-    max-width:520px;background:#fbfdff;margin:12px 0;
+.bubble{
+    border:1.5px solid #7a8ba0;border-radius:18px;padding:12px 16px;
+    max-width:520px;background:#ede3cf;margin:12px 0;
+}
+.select-complex{
+	display:grid;
+	grid-template-columns:1fr 1fr;
+    gap:5%;
+    align-items:flex-start;
+    width:90%;
+	margin-left:7%;
+	margin-right:7%;
+}
+.complex-bubble{
+	border:1.5px solid #7a8ba0;border-radius:14px;padding:12px 16px;
+    max-width:100%;background:#ede3cf;margin:12px 0;
 }

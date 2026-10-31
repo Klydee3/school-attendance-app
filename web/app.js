@@ -13,8 +13,9 @@ const message={
 function homeFor(role) {
     if(role==="STUDENT") {return "/student.html";}
     if(role==="TEACHER") {return "/teacher.html";}
-	if(role==="CAFETERIA") {return "/summary.html";}
-    return "/admin.html";
+	if(role==="CAFETERIA") {return "/cafeteria.html";}
+	if(role==="ADMIN"){return "/admin.html";}
+    return "/developer.html";
 }
 const token=localStorage.getItem("token");
 const role=localStorage.getItem("role");
@@ -42,6 +43,7 @@ document.getElementById("login-btn").addEventListener("click",function() {
             localStorage.setItem("token",data.token);
             localStorage.setItem("role",data.role);
 			localStorage.setItem("school",data.school);
+			localStorage.setItem("login",data.login);
             location.href=homeFor(data.role);
         }else{
             message.textContent="Ошибка: "+data.message;

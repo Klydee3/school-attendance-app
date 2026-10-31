@@ -4,7 +4,7 @@ const role=localStorage.getItem("role");
 if(!localStorage.getItem("token")) {
 	location.href="index.html"
 }
-if(token===null||role!=="ADMIN") {
+if(token===null||(role!=="ADMIN"&&role!=="MAIN_DEVELOPER")) {
     location.href="index.html";
 }
 function loadAll() {
@@ -21,7 +21,8 @@ function loadAll() {
             const row=document.createElement("div");
             row.className="pending-row";
             const label=document.createElement("span");
-	label.textContent=s.surname+" "+s.name+"("+s["class"]+") --- "+s.status;
+			label.className="bubble";
+			label.textContent=s.surname+" "+s.name+"("+s["class"]+" класс)";
             const delBtn=document.createElement("button");
             delBtn.className="btn btn-no";
             delBtn.textContent="Удалить";

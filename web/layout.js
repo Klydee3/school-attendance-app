@@ -39,14 +39,26 @@ function two(n) {return n<10?"0"+n:""+n;}
         links+='<a href="/reg-page.html">Регистрация</a>';
     }else{
         links+='<a href="/index.html">Кабинет</a>';
-        if (role === "ADMIN") {
-			links += '<a href="/student-list.html">Список учеников</a>';
-			links += '<a href="/register-student.html">Регистрация ученика</a>';
-			links += '<a href="/applications.html">Заявки на аккаунты</a>';
-			links += '<a href="/assign.html">Классные руководители</a>';
+		if(role==="MAIN_DEVELOPER"){
+			links+='<a href="/student-list.html">Список учеников</a>';
+			links+='<a href="/register-student.html">Регистрация ученика</a>';
+			links+='<a href="/applications.html">Заявки на аккаунты</a>';
+			links+='<a href="/assign.html">Классные руководители</a>';
+			links+='<a href="/reg-dev.html">Зарегистрировать Разработчика</a>';
+			links+='<a href="/summary.html">Утренняя сводка</a>';
+			links+='<a href="/set-school-menu.html">Установить школьное меню</a>';
+		}
+        if (role==="ADMIN") {
+			links+='<a href="/student-list.html">Список учеников</a>';
+			links+='<a href="/register-student.html">Регистрация ученика</a>';
+			links+='<a href="/applications.html">Заявки на аккаунты</a>';
+			links+='<a href="/assign.html">Классные руководители</a>';
 		}
         if (role==="ADMIN"||role==="TEACHER"||role==="CAFETERIA") {
             links+='<a href="/summary.html">Утренняя сводка</a>';
+        }
+		if (role==="CAFETERIA") {
+            links+='<a href="/set-school-menu.html">Установить школьное меню</a>';
         }
         links+='<a href="/change.html">Сменить пароль</a>';
         links+='<a href="#" id="side-logout">Выйти</a>';

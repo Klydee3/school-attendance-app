@@ -1,4 +1,4 @@
-if(!localStorage.getItem("token")||localStorage.getItem("role")==="STUDENT"){
+if(!localStorage.getItem("token")||(localStorage.getItem("role")==="STUDENT"&&localStorage.getItem("role")!=="MAIN_DEVELOPER")){
     location.href="/index.html";
 }
 const date=new URLSearchParams(location.search).get("date")||"";
